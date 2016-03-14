@@ -3,24 +3,25 @@
 process.env.NODE_ENV = 'test';
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
+const config = require(__dirname + '/../config/options.js');
 const fs = require('fs');
 const ssloptions = {
-    key: fs.readFileSync('server.key'),
-    cert: fs.readFileSync('server.crt')
+    key: fs.readFileSync(config.server_key),
+    cert: fs.readFileSync(config.server_crt)
 };
 const https = require('https');
 
-suite('api:', () => {
+suite('api:', function () {
 
     let server = require('../app.js');
-    const config = require(__dirname + '/../config/options.js');
+
     if (!server) server = https.createServer(ssloptions);
     const assert = require('chai').assert;
-    test('this always passes', () => {
+    test('this always passes', function () {
         assert.equal(1, 1);
     });
 
-    test('/api should return statusCode 302', (done) => {
+    test('/api should return statusCode 302', function (done) {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
         const req = https.request({
             host: config.app_host,
@@ -29,12 +30,12 @@ suite('api:', () => {
             rejectUnauthorized: false,
             requestCert: false,
             agent: false
-        }, (res) => {
+        }, function (res) {
             const body = [];
-            res.on('data', (data) => {
+            res.on('data', function (data) {
                 body.push(data);
             });
-            res.on('end', () => {
+            res.on('end', function () {
                 assert.equal(res.statusCode,
                     302);
                 done();

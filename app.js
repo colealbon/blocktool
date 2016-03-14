@@ -20,8 +20,8 @@ app.use(logger());
 app.use(forceSSL());
 
 const ssloptions = {
-    key: fs.readFileSync('server.key'),
-    cert: fs.readFileSync('server.crt')
+    key: fs.readFileSync(config.server_key),
+    cert: fs.readFileSync(config.server_crt)
 };
 
 const render = views(__dirname + '/views', {
