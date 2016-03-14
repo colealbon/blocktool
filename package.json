@@ -23,7 +23,8 @@
     "node-debugger": "^1.0.0",
     "pre-commit": "^1.1.2",
     "pre-push": "^0.1.1",
-    "swagger-koa": "^1.0.8"
+    "swagger-koa": "^1.0.8",
+    "swig": "^1.4.2"
   },
   "scripts": {
     "test": "mocha --harmony --ui=tdd --inline-diffs --colors --bail test",
