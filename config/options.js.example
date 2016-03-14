@@ -1,0 +1,19 @@
+'use strict';
+
+/*eslint-disable */
+module.exports = {
+    https_port: 9000,
+    app_host: '127.0.0.1',
+    app_name: 'jimsonweed',
+    public_dir: '/home/cole/jimsonweed/public',
+    server_pub_key: '/home/cole/jimsonweed/config/demo_server.pub',
+    server_private_key: '/home/cole/jimsonweed/config/demo_server.asc',
+    server_crt: '/home/cole/jimsonweed/server.crt',
+    server_key: '/home/cole/jimsonweed/server.key',
+    test_string: 'bubblegum',
+    test_client_userid: 'test_client_0000001',
+    test_client_pub_key: '/home/cole/jimsonweed/config/test_client_0000001.pub',
+    test_client_private_key: '/home/cole/jimsonweed/config/test_client_0000001.asc',
+    test_client_private_key_password: '',
+    heartbeat_seconds: 1
+};

@@ -1,0 +1,27 @@
+{
+    "ecmaFeatures": {
+        "blockBindings": true,
+        "forOf": true,
+        "arrowFunctions": true
+    },
+    "extends": "eslint:recommended",
+    "eslint strict": [2, "global"],
+    "rules": {
+        "semi": 2,
+        "complexity": [2,4],
+        "prefer-const": 2,
+        "max-params": [2, 3],
+        "no-class-assign": 2,
+        "no-cond-assign": 2,
+        "no-const-assign": 2,
+        "no-func-assign": 2,
+        "no-new": 2,
+        "no-param-reassign": 2,
+        "no-plusplus": 2,
+        "no-return-assign": 2,
+        "no-sequences": 2,
+        "no-var": 2,
+        "prefer-arrow-callback": 2,
+        "operator-assignment": [2, "never"]
+    }
+}
