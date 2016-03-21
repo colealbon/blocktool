@@ -10,18 +10,19 @@ const ssloptions = {
     cert: fs.readFileSync(config.server_crt)
 };
 const https = require('https');
+const cheerio = require('cheerio');
 
-suite('api:', function () {
+suite('api:', function() {
 
     let server = require('../app.js');
 
     if (!server) server = https.createServer(ssloptions);
     const assert = require('chai').assert;
-    test('this always passes', function () {
+    test('this always passes', function() {
         assert.equal(1, 1);
     });
 
-    test('/api should return statusCode 302', function (done) {
+    test('/api should return statusCode 302', function(done) {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
         const req = https.request({
             host: config.app_host,
@@ -30,14 +31,51 @@ suite('api:', function () {
             rejectUnauthorized: false,
             requestCert: false,
             agent: false
-        }, function (res) {
+        }, function(res) {
             const body = [];
-            res.on('data', function (data) {
+            res.on('data', function(data) {
                 body.push(data);
             });
-            res.on('end', function () {
+            res.on('end', function() {
                 assert.equal(res.statusCode,
                     302);
+                done();
+            });
+        });
+        req.end();
+    });
+
+    test('/blockcount JSON validation', (done) => {
+        process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+        const req = https.request({
+            host: config.app_host,
+            path: '/blockcount',
+            port: config.https_port,
+            rejectUnauthorized: false,
+            requestCert: false,
+            agent: false
+        }, (res) => {
+            res.setEncoding('utf8');
+            let spool = '';
+            res.on('data', (data) => {
+                spool = spool + data;
+            });
+            res.on('end', () => {
+                if (res.statusCode == 200) {
+                    const cheers = cheerio.load(
+                        spool, {
+                            decodeEntities: false
+                        });
+                    assert.isBelow(403581, JSON
+                        .parse(
+                            cheers.html()).blockcount
+                    );
+                    assert.isBelow(
+                        1458536468849, JSON
+                        .parse(
+                            cheers.html()).timestamp
+                    );
+                }
                 done();
             });
         });

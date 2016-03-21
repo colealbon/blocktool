@@ -44,7 +44,7 @@ app.use(swagger.init({
     swaggerURL: '/swagger',
     swaggerJSON: '/api-docs.json',
     swaggerUI: './public/swagger',
-    apis: ['./api.js', './api.yml', './api.coffee']
+    apis: ['./api.js']
 }));
 
 app.use(serve(path.join(__dirname, 'public')));
@@ -52,6 +52,8 @@ app.use(serve(path.join(__dirname, 'public')));
 app.use(router.get('/', index));
 
 app.use(router.post('/login', api.login));
+
+app.use(router.get('/blockcount', api.blockcount));
 
 const server = https.createServer(ssloptions, app.callback()).listen(config.https_port);
 module.exports.server = server;

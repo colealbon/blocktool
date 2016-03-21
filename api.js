@@ -1,8 +1,10 @@
 /*eslint-env node, mocha, es6*/
+const blocktool = require(process.cwd() + '/lib/blocktool.js');
+
 /**
 
  * @swagger
- * resourcePath: /apiJs
+ * resourcePath: /api
  * description: All about API
  */
 
@@ -42,6 +44,27 @@ exports.login = function*() {
 
 /**
  * @swagger
+ * path: /blockcount
+ * operations:
+ *   -  httpMethod: GET
+ *      summary: current blockcount
+ *      notes: Returns latest known blockcount
+ *      responseClass: Blockcount
+ *      nickname: blockcount
+ */
+
+exports.blockcount = function*() {
+    this.body = {
+        'blockcount': yield blocktool.getBlockCount().then((
+            blockcount) => {
+            return blockcount;
+        }),
+        'timestamp': new Date().getTime()
+    };
+};
+
+/**
+ * @swagger
  * models:
  *   User:
  *     id: User
@@ -50,4 +73,13 @@ exports.login = function*() {
  *         type: String
  *       password:
  *         type: String
+ *   Blockcount:
+ *     id: Blockcount
+ *     properties:
+ *       blockcount:
+ *         type: integer
+ *         required: true
+ *       timestamp:
+ *         type: integer
+ *         required: true
  */
