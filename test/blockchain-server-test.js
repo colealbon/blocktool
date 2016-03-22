@@ -19,9 +19,9 @@ suite('blockchain-server:', function() {
         timeout: 60000
     });
 
-    test('blockchain rpc server is alive', (done) => {
+    test('blockchain rpc server is alive', function (done) {
         const version = client.getInfo();
-        return expect(version.then((serverinfo) => {
+        return expect(version.then(function (serverinfo) {
             return serverinfo.version;
         })).to.eventually.be.above(110200 - 1).notify(done);
     });

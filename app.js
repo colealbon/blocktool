@@ -55,5 +55,7 @@ app.use(router.post('/login', api.login));
 
 app.use(router.get('/blockcount', api.blockcount));
 
+app.use(router.get('/blocktime', api.blocktime));
+
 const server = https.createServer(ssloptions, app.callback()).listen(config.https_port);
 module.exports.server = server;

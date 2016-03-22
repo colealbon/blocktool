@@ -55,10 +55,53 @@ exports.login = function*() {
 
 exports.blockcount = function*() {
     this.body = {
-        'blockcount': yield blocktool.getBlockCount().then((
-            blockcount) => {
+        'blockcount': yield blocktool.getBlockCount().then(function (
+            blockcount) {
             return blockcount;
         }),
+        'timestamp': new Date().getTime()
+    };
+};
+
+/**
+ * @swagger
+ * path: /blocktime
+ * operations:
+ *   -  httpMethod: GET
+ *      summary: current blocktime or blocktime for provided blockcount
+ *      notes: blocktime, blockcount and server timestamp
+ *      responseClass: Blocktime
+ *      nickname: blocktime
+ *      parameters:
+ *        - name: blockcount
+ *          description: blockcount
+ *          paramType: query
+ *          required: false
+ *          dataType: integer
+ */
+
+exports.blocktime = function*() {
+  const query = this.request.query;
+  const blockcount = parseInt(query.blockcount);
+
+  this.body = {
+        'blocktime':
+            (blockcount) ?
+            yield blocktool.blockCountToTime(blockcount).then(function (
+                blocktime) {
+                return blocktime;
+            }):
+            yield blocktool.getLatestBlockTime().then(function (
+                blocktime) {
+                return blocktime;
+            }),
+        'blockcount': (blockcount) ?
+            blockcount :
+            yield blocktool.getBlockCount().then(function (
+                blockcount) {
+                return blockcount;
+              })
+                ,
         'timestamp': new Date().getTime()
     };
 };
@@ -76,6 +119,18 @@ exports.blockcount = function*() {
  *   Blockcount:
  *     id: Blockcount
  *     properties:
+ *       blockcount:
+ *         type: integer
+ *         required: true
+ *       timestamp:
+ *         type: integer
+ *         required: true
+ *   Blocktime:
+ *     id: Blocktime
+ *     properties:
+ *       blocktime:
+ *         type: integer
+ *         required: true
  *       blockcount:
  *         type: integer
  *         required: true

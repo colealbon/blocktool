@@ -4,7 +4,13 @@
 module.exports = {
     https_port: 9000,
     app_host: '127.0.0.1',
-    app_name: 'blocktool',
+    blockchainxd_host: '127.0.0.1',
+    blockchainxd_rpc_user: 'RIPPLE',
+    blockchainxd_rpc_pass: 'r1pp1e',
+    winston_log_level: 'debug',  // error, warn, info, , verbose, debug, silly
+    winston_log_file: './blocktool.log',
+    memoize: { primitive: true, maxAge: 30000, preFetch: true , async: true }
+    rpc_password='r1pp1e',
     public_dir: '/home/cole/blocktool/public',
     server_pub_key: '/home/cole/blocktool/config/demo_server.pub',
     server_private_key: '/home/cole/blocktool/config/demo_server.asc',
