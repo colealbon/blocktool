@@ -1,5 +1,5 @@
 /*eslint-env node, mocha, es6*/
-const blocktool = require(process.cwd() + '/lib/index.js');
+const blocktool = require('./lib/index.js');
 
 /**
 
@@ -86,18 +86,21 @@ exports.blocktime = function*() {
 
     this.body = {
         'blocktime': (blockcount) ?
-            yield blocktool.blockCountToTime(blockcount).then(function(
-                blocktime) {
-                return blocktime;
-            }) : yield blocktool.getLatestBlockTime().then(function(
-                blocktime) {
-                return blocktime;
-            }),
+            yield blocktool.blockCountToTime(blockcount).then(
+                function(
+                    blocktime) {
+                    return blocktime;
+                }) : yield blocktool.getLatestBlockTime().then(
+                function(
+                    blocktime) {
+                    return blocktime;
+                }),
         'blockcount': (blockcount) ?
-            blockcount : yield blocktool.getBlockCount().then(function(
-                blockcount) {
-                return blockcount;
-            }),
+            blockcount : yield blocktool.getBlockCount().then(
+                function(
+                    blockcount) {
+                    return blockcount;
+                }),
         'timestamp': new Date().getTime()
     };
 };

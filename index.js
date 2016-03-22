@@ -1,5 +1,5 @@
 /*eslint-env node, mocha, es6*/
-const blocktool = require(process.cwd() + '/lib/index.js');
+const blocktool = require('./lib/index.js');
 
 /**
 
