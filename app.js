@@ -44,7 +44,7 @@ app.use(swagger.init({
     swaggerURL: '/swagger',
     swaggerJSON: '/api-docs.json',
     swaggerUI: './public/swagger',
-    apis: ['./api.js']
+    apis: ['./index.js']
 }));
 
 app.use(serve(path.join(__dirname, 'public')));
