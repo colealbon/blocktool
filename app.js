@@ -51,8 +51,6 @@ app.use(serve(path.join(__dirname, 'public')));
 
 app.use(router.get('/', index));
 
-app.use(router.post('/login', api.login));
-
 app.use(router.get('/blockcount', api.blockcount));
 
 app.use(router.get('/blocktime', api.blocktime));

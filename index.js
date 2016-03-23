@@ -10,43 +10,10 @@ const blocktool = require('./lib/index.js');
 
 /**
  * @swagger
- * path: /login
- * operations:
- *   -  httpMethod: POST
- *      summary: Login with username and password
- *      notes: Returns a user based on username
- *      responseClass: User
- *      nickname: login
- *      consumes:
- *        - text/html
- *      parameters:
- *        - name: username
- *          description: Your username
- *          paramType: query
- *          required: true
- *          dataType: string
- *        - name: password
- *          description: Your password
- *          paramType: query
- *          required: true
- *          dataType: string
- */
-
-exports.login = function*() {
-    const user = {},
-        query = this.request.query;
-
-    user.username = query.username;
-    user.password = query.password;
-
-    this.body = user;
-};
-/**
- * @swagger
  * path: /blockcount
  * operations:
  *   -  httpMethod: GET
- *      summary: current blockcount
+ *      summary: current blockcount or blockcount for provided blocktime
  *      notes: Returns latest known blockcount
  *      responseClass: Blockcount
  *      nickname: blockcount
