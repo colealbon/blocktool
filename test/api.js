@@ -45,7 +45,7 @@ suite('api:', function() {
         req.end();
     });
 
-    test('/blockcount JSON validation', function (done) {
+    test('/blockcount JSON validation', function(done) {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
         const req = https.request({
             host: config.app_host,
@@ -54,13 +54,13 @@ suite('api:', function() {
             rejectUnauthorized: false,
             requestCert: false,
             agent: false
-        }, function (res) {
+        }, function(res) {
             res.setEncoding('utf8');
             let spool = '';
-            res.on('data', function (data) {
+            res.on('data', function(data) {
                 spool = spool + data;
             });
-            res.on('end', function () {
+            res.on('end', function() {
                 if (res.statusCode == 200) {
                     const cheers = cheerio.load(
                         spool, {
@@ -81,7 +81,7 @@ suite('api:', function() {
         });
         req.end();
     });
-    test('/blocktime no params JSON validation', function (done) {
+    test('/blocktime no params JSON validation', function(done) {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
         const req = https.request({
             host: config.app_host,
@@ -90,22 +90,23 @@ suite('api:', function() {
             rejectUnauthorized: false,
             requestCert: false,
             agent: false
-        }, function (res) {
+        }, function(res) {
             res.setEncoding('utf8');
             let spool = '';
-            res.on('data', function (data) {
+            res.on('data', function(data) {
                 spool = spool + data;
             });
-            res.on('end', function () {
+            res.on('end', function() {
                 if (res.statusCode == 200) {
                     const cheers = cheerio.load(
                         spool, {
                             decodeEntities: false
                         });
-                    assert.isBelow(1458625149, JSON
-                            .parse(
-                                cheers.html()).blocktime
-                        );
+                    assert.isBelow(1458625149,
+                        JSON
+                        .parse(
+                            cheers.html()).blocktime
+                    );
                     assert.isBelow(403581, JSON
                         .parse(
                             cheers.html()).blockcount
@@ -121,7 +122,7 @@ suite('api:', function() {
         });
         req.end();
     });
-    test('/blocktime with params JSON validation', function (done) {
+    test('/blocktime with params JSON validation', function(done) {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
         const req = https.request({
             host: config.app_host,
@@ -130,23 +131,60 @@ suite('api:', function() {
             rejectUnauthorized: false,
             requestCert: false,
             agent: false
-        }, function (res) {
+        }, function(res) {
             res.setEncoding('utf8');
             let spool = '';
-            res.on('data', function (data) {
+            res.on('data', function(data) {
                 spool = spool + data;
             });
-            res.on('end', function () {
+            res.on('end', function() {
                 if (res.statusCode == 200) {
                     const cheers = cheerio.load(
                         spool, {
                             decodeEntities: false
                         });
-                    assert.equal(1399703554, JSON
-                            .parse(
-                                cheers.html()).blocktime
-                        );
+                    assert.equal(1399703554,
+                        JSON
+                        .parse(
+                            cheers.html()).blocktime
+                    );
                     assert.equal(300000, JSON
+                        .parse(
+                            cheers.html()).blockcount
+                    );
+                    assert.isBelow(
+                        1458534660, JSON
+                        .parse(
+                            cheers.html()).timestamp
+                    );
+                }
+                done();
+            });
+        });
+        req.end();
+    });
+    test('/blocktime with params JSON validation', function(done) {
+        process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+        const req = https.request({
+            host: config.app_host,
+            path: '/blockcount?targettime=1358694696&api_key=special-key',
+            port: config.https_port,
+            rejectUnauthorized: false,
+            requestCert: false,
+            agent: false
+        }, function(res) {
+            res.setEncoding('utf8');
+            let spool = '';
+            res.on('data', function(data) {
+                spool = spool + data;
+            });
+            res.on('end', function() {
+                if (res.statusCode == 200) {
+                    const cheers = cheerio.load(
+                        spool, {
+                            decodeEntities: false
+                        });
+                    assert.equal(217296, JSON
                         .parse(
                             cheers.html()).blockcount
                     );

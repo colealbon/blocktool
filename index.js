@@ -41,7 +41,6 @@ exports.login = function*() {
 
     this.body = user;
 };
-
 /**
  * @swagger
  * path: /blockcount
@@ -51,14 +50,26 @@ exports.login = function*() {
  *      notes: Returns latest known blockcount
  *      responseClass: Blockcount
  *      nickname: blockcount
+ *      parameters:
+ *        - name: targettime
+ *          description: unix timestamp
+ *          paramType: query
+ *          required: false
+ *          dataType: integer
  */
 
 exports.blockcount = function*() {
+    const query = this.request.query;
+    const targettime = parseInt(query.targettime);
     this.body = {
-        'blockcount': yield blocktool.getBlockCount().then(function(
-            blockcount) {
-            return blockcount;
-        }),
+        'blockcount': (targettime) ?
+            yield blocktool.timeToBlockCount(targettime).then(function(
+                blockcount) {
+                return blockcount;
+            }) : yield blocktool.getBlockCount().then(function(
+                blockcount) {
+                return blockcount;
+            }),
         'timestamp': new Date().getTime()
     };
 };
