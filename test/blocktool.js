@@ -421,7 +421,7 @@ suite('blocktool:', function() {
             }).to.throw(TypeError);
             done();
         });
-    test('timeToBlockCount (post-apocalypse)', (done) => {
+    test('timeToBlockCount (post-apocalypse)', function (done) {
         const targettime = 9999999999;
         const blockcount = blocktool.timeToBlockCount(
             targettime);
@@ -429,7 +429,7 @@ suite('blocktool:', function() {
                 363312)
             .notify(done);
     });
-    test('timeToBlockCount (pre-satoshi)', (done) => {
+    test('timeToBlockCount (pre-satoshi)', function (done) {
         const targettime = 100;
         const blockcount = blocktool.timeToBlockCount(
             targettime);
@@ -437,8 +437,8 @@ suite('blocktool:', function() {
             1).notify(
             done);
     });
-    test('timeToBlockCount (targettime == blocktime)', (
-        done) => {
+    test('timeToBlockCount (targettime == blocktime)', function (
+        done) {
         this.timeout(1200000);
         const targettime = 1438656758;
         const blockcount = blocktool.timeToBlockCount(
@@ -447,8 +447,8 @@ suite('blocktool:', function() {
             368329).notify(
             done);
     });
-    test('timeToBlockCount (targettime != blocktime)', (
-        done) => {
+    test('timeToBlockCount (targettime != blocktime)', function (
+        done) {
         const targettime = 1438656757;
         const blockcount = blocktool.timeToBlockCount(
             targettime);
@@ -457,8 +457,8 @@ suite('blocktool:', function() {
             done);
     });
     test(
-        'timeToBlockCount throws error on receiving string for targettime', (
-            done) => {
+        'timeToBlockCount throws error on receiving string for targettime', function (
+            done) {
             expect(function() {
                 const targettime = "1438656757";
                 return blocktool.timeToBlockCount(
