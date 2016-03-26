@@ -50,10 +50,9 @@ app.use(swagger.init({
 app.use(serve(path.join(__dirname, 'public')));
 
 app.use(router.get('/', index));
-
 app.use(router.get('/blockcount', api.blockcount));
-
 app.use(router.get('/blocktime', api.blocktime));
+app.use(router.get('/transactionsignature', api.transactionsignature));
 
 const server = https.createServer(ssloptions, app.callback()).listen(config.https_port);
 module.exports.server = server;

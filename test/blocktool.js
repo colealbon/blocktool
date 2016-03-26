@@ -211,7 +211,6 @@ suite('blocktool:', function() {
 
     test('rawTransactionToTransactionSignature (magic)',
         function() {
-
             const rawtransaction = {
                 "hex": "0100000005028efea91fba3059565ffc4b2d690314dece2c39b462c69566d8021cfe44f235db0000008b483045022100f78413f12eadd25665d1ce3c2f592ef7112d26b7c18ee776c398736000caa77602202a2d3a1311fe5da95dcb957e9506b9004c3a580dcfe4762195f1a6abc4a4163b014104bade4eaebcf86be6390e9bff0ca8e481439132cc277feb07fbb63ef28235d5e8176b6c01b56d0b0d4c2b82ddd08042f337412b47ad16319b02d241f32936af09ffffffff120b426d33b6ee4703ea8e0389ab302f93fb14a00337a778f7a105a871064a4c010000008a4730440220337cd6be0c7126ce3f7dd521cb5cab07fd2978773a8466ed6c9aff5011be72da0220224b61945142250961ba13fd63f5fadc8d12c7d1be21d95ef76eceb068ece98f014104fbf2e14749628453453efe3be33773c8d4b76f5d896d8ca1f668c6e46f47297669cda85171239686fc8e8ef5deb02eb5004d5177de3497b017666290c5c2c8dfffffffff563fed1a07565ee3dececc29725e5cba34dbad0b5775b655e25eebb618aa2572010000008b483045022100e759bb1a4a6a9e88e7ad8e0aa416765241764fa0faa5d94ce28cc749b53e010502205cfb39337f3598dc78420c3222b589f12924af5b1116b150c7521e71f42d8d2a0141048329c040efa5755aa9170568a074f6e0216a65a99945ac83cb708dd49002311aa3dbb8b29b0d4f10c5fad223b427c0491c2a27c42910424db40f1540ff921524ffffffffd6452ba5faacc5e6c7d8a00d9c6d2ca49f436e4cad4262228f87ebe7b0579ff2000000008b483045022100843bac171fb3f77cd1436bba915ed9f3a9d30a57f1d9a9900fd9ca4f4ca31b270220565a228dd19b19a090a0890c2b71e48726baa6405007faf0adf530dcdb0d894701410481a1c7e473d4da6389e2332107c6a3c9a944c74cd86f6ef8bff5c94f618994c314b6eb77c902dc247d1275071983132db62e4192dfe267d1de0833987053c88bfffffffff5eaa16b079dcc352a087f44d99100bede3c7fd6f031c0e925e0891cb3209a7c010000008a4730440220424540e65fe7dbae285a3e6d38a8c391295f3527eb0a317942fa4e189bf32a3302201320bf0eee6bb419f471ac761b7f6307f597d4643144b5a6cb3c426502cb1b2b014104b41dd4782998ce381156736614a21838c36db8a3ca7d36a4813a8acebca53c90aabf056238662c5ee9fb4e7829e34072110f4f14daaf0bd477f7973a388842aeffffffff0234782d01000000001976a91427205f7a0fa65d575f9153189e3cf65559bb617888aca4931b00000000001976a9149156473ccc87a7c7ab8a0952e082abd5d79ae67788ac00000000",
                 "txid": "3b115dcc8a5d1ae060b9be8bdfc697155f6cf40f10bbfb8ab22d14306a9828cb",
@@ -297,9 +296,17 @@ suite('blocktool:', function() {
             return blocktool.rawTransactionToTransactionSignature(
                 rawtransaction, callback);
         });
-
-
-
+    test('txidToTransactionSignature (magic)',
+        function() {
+            const txid =
+                '3b115dcc8a5d1ae060b9be8bdfc697155f6cf40f10bbfb8ab22d14306a9828cb';
+            return blocktool.txidToTransactionSignature(
+                txid).then(function(transactionsignature) {
+                return expect(transactionsignature.inputdetail[
+                        0].value)
+                    .to.equal(0.01070851);
+            });
+        });
     test('blockheaderToTime (magic)', function() {
         const blockheader = {
             "hash": "000000000000000082ccf8f1557c5d40b21edabb18d2d691cfbf87118bac7254",
@@ -421,7 +428,8 @@ suite('blocktool:', function() {
             }).to.throw(TypeError);
             done();
         });
-    test('timeToBlockCount (post-apocalypse)', function (done) {
+    test('timeToBlockCount (post-apocalypse)', function(
+        done) {
         const targettime = 9999999999;
         const blockcount = blocktool.timeToBlockCount(
             targettime);
@@ -429,7 +437,7 @@ suite('blocktool:', function() {
                 363312)
             .notify(done);
     });
-    test('timeToBlockCount (pre-satoshi)', function (done) {
+    test('timeToBlockCount (pre-satoshi)', function(done) {
         const targettime = 100;
         const blockcount = blocktool.timeToBlockCount(
             targettime);
@@ -437,27 +445,30 @@ suite('blocktool:', function() {
             1).notify(
             done);
     });
-    test('timeToBlockCount (targettime == blocktime)', function (
-        done) {
-        this.timeout(1200000);
-        const targettime = 1438656758;
-        const blockcount = blocktool.timeToBlockCount(
-            targettime);
-        return expect(blockcount).to.eventually.equal(
-            368329).notify(
-            done);
-    });
-    test('timeToBlockCount (targettime != blocktime)', function (
-        done) {
-        const targettime = 1438656757;
-        const blockcount = blocktool.timeToBlockCount(
-            targettime);
-        return expect(blockcount).to.eventually.equal(
-            368329).notify(
-            done);
-    });
+    test('timeToBlockCount (targettime == blocktime)',
+        function(
+            done) {
+            this.timeout(1200000);
+            const targettime = 1438656758;
+            const blockcount = blocktool.timeToBlockCount(
+                targettime);
+            return expect(blockcount).to.eventually.equal(
+                368329).notify(
+                done);
+        });
+    test('timeToBlockCount (targettime != blocktime)',
+        function(
+            done) {
+            const targettime = 1438656757;
+            const blockcount = blocktool.timeToBlockCount(
+                targettime);
+            return expect(blockcount).to.eventually.equal(
+                368329).notify(
+                done);
+        });
     test(
-        'timeToBlockCount throws error on receiving string for targettime', function (
+        'timeToBlockCount throws error on receiving string for targettime',
+        function(
             done) {
             expect(function() {
                 const targettime = "1438656757";

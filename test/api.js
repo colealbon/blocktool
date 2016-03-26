@@ -61,6 +61,8 @@ suite('api:', function() {
                 spool = spool + data;
             });
             res.on('end', function() {
+                assert.equal(res.statusCode,
+                    200);
                 if (res.statusCode == 200) {
                     const cheers = cheerio.load(
                         spool, {
@@ -97,6 +99,8 @@ suite('api:', function() {
                 spool = spool + data;
             });
             res.on('end', function() {
+                assert.equal(res.statusCode,
+                    200);
                 if (res.statusCode == 200) {
                     const cheers = cheerio.load(
                         spool, {
@@ -138,6 +142,8 @@ suite('api:', function() {
                 spool = spool + data;
             });
             res.on('end', function() {
+                assert.equal(res.statusCode,
+                    200);
                 if (res.statusCode == 200) {
                     const cheers = cheerio.load(
                         spool, {
@@ -179,6 +185,8 @@ suite('api:', function() {
                 spool = spool + data;
             });
             res.on('end', function() {
+                assert.equal(res.statusCode,
+                    200);
                 if (res.statusCode == 200) {
                     const cheers = cheerio.load(
                         spool, {
@@ -192,6 +200,56 @@ suite('api:', function() {
                         1458534660, JSON
                         .parse(
                             cheers.html()).timestamp
+                    );
+                }
+                done();
+            });
+        });
+        req.end();
+    });
+    test('/transactionsignature with param txid', function(done) {
+        process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+        const req = https.request({
+            host: config.app_host,
+            path: '/transactionsignature?txid=3b115dcc8a5d1ae060b9be8bdfc697155f6cf40f10bbfb8ab22d14306a9828cb&api_key=special-key',
+            port: config.https_port,
+            rejectUnauthorized: false,
+            requestCert: false,
+            agent: false
+        }, function(res) {
+            res.setEncoding('utf8');
+            let spool = '';
+            res.on('data', function(data) {
+                spool = spool + data;
+            });
+            res.on('end', function() {
+                assert.equal(res.statusCode,
+                    200);
+
+                if (res.statusCode == 200) {
+                    const cheers = cheerio.load(
+                        spool, {
+                            decodeEntities: false
+                        });
+                    assert.equal(
+                        '3b115dcc8a5d1ae060b9be8bdfc697155f6cf40f10bbfb8ab22d14306a9828cb',
+                        JSON
+                        .parse(
+                            cheers.html()
+                        ).transactionsignature
+                        .txid);
+                    assert.ok(JSON
+                        .parse(
+                            cheers.html()).transactionsignature
+                        .inputdetail
+                    )
+                    assert.equal(
+                        '7c9a20b31c89e025e9c031f0d67f3cdebe0091d9447f082a35cc9d076ba1eaf5',
+                        JSON
+                        .parse(
+                            cheers.html()
+                        ).transactionsignature
+                        .inputdetail[4].txid
                     );
                 }
                 done();
