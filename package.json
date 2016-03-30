@@ -17,6 +17,7 @@
     "koa-route": "^2.4.2",
     "koa-static": "^2.0.0",
     "memoizee": "^0.3.9",
+    "object-assign": "^4.0.1",
     "retry-bluebird": "^0.1.1",
     "swagger-koa": "^1.0.8",
     "winston": "^2.2.0"

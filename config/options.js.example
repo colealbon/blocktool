@@ -22,5 +22,5 @@ module.exports = {
     blockchainxd_port: '8333',
     blockchainxd_rpc_user: 'bitcoinrpc',
     blockchainxd_rpc_pass: '9XtkJR1yyjn4iXwxCZLypdW75E5FG3mjNH4RZXVoWCLx',
-    blockchainxd_swagger_index: './index.js'
+    blockchainxd_swagger_index: './api.js'
 };

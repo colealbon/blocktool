@@ -5,6 +5,7 @@ const blocktool = require(process.cwd() + '/lib/blocktool.js');
 const chai = require('chai');
 const expect = chai.expect;
 const chaiAsPromised = require("chai-as-promised");
+
 chai.use(chaiAsPromised);
 
 suite('blocktool:', function() {
@@ -44,7 +45,7 @@ suite('blocktool:', function() {
                 );
             });
     });
-    test('dateRangeToBlockRange (magic)', () => {
+    test('dateRangeToBlockRange (magic)', function () {
         const starttime = 1435795200;
         const endtime = 1435795800; //368596 Wed Aug  5 20:16:32 PDT 2015
         return blocktool.dateRangeToBlockRange({
