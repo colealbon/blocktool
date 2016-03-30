@@ -242,7 +242,7 @@ suite('api:', function() {
                         .parse(
                             cheers.html()).transactionsignature
                         .inputdetail
-                    )
+                    );
                     assert.equal(
                         '7c9a20b31c89e025e9c031f0d67f3cdebe0091d9447f082a35cc9d076ba1eaf5',
                         JSON

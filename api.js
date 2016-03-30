@@ -1,5 +1,5 @@
 /*eslint-env node, mocha, es6*/
-const blocktool = require('./lib/index.js');
+const blocktool = require('./lib/blocktool.js');
 
 /**
 
@@ -108,8 +108,6 @@ exports.transactionsignature = function*() {
         'timestamp': new Date().getTime()
     };
 };
-
-
 
 /**
  * @swagger

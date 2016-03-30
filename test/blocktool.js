@@ -1,7 +1,7 @@
 'use strict';
 /*eslint-env node, mocha, es6 */
 process.env.NODE_ENV = 'test';
-const blocktool = require(process.cwd() + '/lib/index.js');
+const blocktool = require(process.cwd() + '/lib/blocktool.js');
 const chai = require('chai');
 const expect = chai.expect;
 const chaiAsPromised = require("chai-as-promised");
@@ -17,14 +17,13 @@ suite('blocktool:', function() {
             .be
             .above(1458534660).notify(done);
     });
-    test('blockhashGuard throws error if length not 64', function(done) {
-        expect(function() {
-            const testblockhash =
-                '000000000000000082ccf8f1557c5d40b21edabb18d2d691cfbf87118bac725';
-            return blocktool.blockhashGuard(
-                testblockhash);
-        }).to.throw(Error);
-        done();
+    test('blockcountToTime (magic)', function() {
+        const blockcount = 300000;
+        const blocktime = blocktool.blockCountToTime(
+            blockcount);
+        return expect(blocktime).to.eventually.equal(
+            1399703554
+        );
     });
     test('blockHashToBlockHeader (magic)', function() {
         const blockhash =
@@ -34,47 +33,261 @@ suite('blocktool:', function() {
                 expect(blockheader.height).to.equal(300000);
             });
     });
-    test('blockcountToTime (magic)', function() {
-        const blockcount = 300000;
-        const blocktime = blocktool.blockCountToTime(
-            blockcount);
-        return expect(blocktime).to.eventually.equal(
-            1399703554
-        );
-    });
-    test('txidToRawTransaction (magic)', function() {
-        const txid =
-            'b39fa6c39b99683ac8f456721b270786c627ecb246700888315991877024b983';
-        return blocktool.txidToRawTransaction(txid).then(
-            function(rawtransaction) {
-                expect(rawtransaction.txid).to.equal(txid);
+
+    test('blockHashToTxid (magic)', function() {
+        const blockhash =
+            '000000000000000082ccf8f1557c5d40b21edabb18d2d691cfbf87118bac7254';
+        return blocktool.blockHashToTxid(blockhash).then(
+            function(txidArr) {
+                expect(txidArr[1]).to.equal(
+                    '7301b595279ece985f0c415e420e425451fcf7f684fcce087ba14d10ffec1121'
+                );
             });
     });
-    test('txidToVout (magic)', function() {
-        const txid =
-            'b39fa6c39b99683ac8f456721b270786c627ecb246700888315991877024b983';
-        return blocktool.txidToVout(txid).then(
-            function(vout) {
-                expect(vout[0].value).to.equal(25.0402836);
-            });
+    test('dateRangeToBlockRange (magic)', () => {
+        const starttime = 1435795200;
+        const endtime = 1435795800; //368596 Wed Aug  5 20:16:32 PDT 2015
+        return blocktool.dateRangeToBlockRange({
+            'starttime': starttime,
+            'endtime': endtime
+        }).then(function(blockrange) {
+            expect(blockrange).to.not.equal(undefined);
+            expect(blockrange.blockcountlow).to.equal(
+                363398);
+            expect(blockrange.blockcounthigh).to.equal(
+                363400);
+        });
     });
-    test('vinItemToInputDetailItem (magic)', function() {
-        const vinitem = {
-            "txid": "7c9a20b31c89e025e9c031f0d67f3cdebe0091d9447f082a35cc9d076ba1eaf5",
-            "vout": 1,
-            "scriptSig": {
-                "asm": "30440220424540e65fe7dbae285a3e6d38a8c391295f3527eb0a317942fa4e189bf32a3302201320bf0eee6bb419f471ac761b7f6307f597d4643144b5a6cb3c426502cb1b2b[ALL] 04b41dd4782998ce381156736614a21838c36db8a3ca7d36a4813a8acebca53c90aabf056238662c5ee9fb4e7829e34072110f4f14daaf0bd477f7973a388842ae",
-                "hex": "4730440220424540e65fe7dbae285a3e6d38a8c391295f3527eb0a317942fa4e189bf32a3302201320bf0eee6bb419f471ac761b7f6307f597d4643144b5a6cb3c426502cb1b2b014104b41dd4782998ce381156736614a21838c36db8a3ca7d36a4813a8acebca53c90aabf056238662c5ee9fb4e7829e34072110f4f14daaf0bd477f7973a388842ae"
-            },
-            "sequence": 4294967295
-        };
-        return blocktool.vinItemToInputDetailItem(vinitem).then(
-            function(inputdetailitem) {
-                expect(inputdetailitem[0].value).to.equal(
-                    0.01033289);
-            });
+    test('dateRangeToBlockRange (throw error on missing starttime)',
+        function(done) {
+            expect(function() {
+                const endtime = 1435795800; //368596 Wed Aug  5 20:16:32 PDT 2015
+                return blocktool.dateRangeToBlockRange({
+                    'endtime': endtime
+                });
+            }).to.throw(TypeError);
+            done();
+        });
+    test('dateRangeToBlockRange does nothing with good dateRange',
+        function(
+            done) {
+            expect(function() {
+                const testdateRange = {
+                    'starttime': 1,
+                    'endtime': 10
+                };
+                return blocktool.dateRangeToBlockRange(
+                    testdateRange);
+            }).to.not.throw(Error);
+            done();
+        });
+    test('dateRangeToBlockRange throws error on string', function(done) {
+        expect(function() {
+            const testdateRange = {
+                'starttime': 1,
+                'endtime': "10"
+            };
+            return blocktool.dateRangeToBlockRange(
+                testdateRange);
+        }).to.throw(Error);
+        done();
+    });
+    test('dateRangeToBlockRange throws error on decimal', function(done) {
+        expect(function() {
+            const testdateRange = {
+                'starttime': 1.123,
+                'endtime': "10"
+            };
+            return blocktool.dateRangeToBlockRange(
+                testdateRange);
+        }).to.throw(TypeError);
+        done();
+    });
+    test('dateRangeToBlockRange throws error on missing low', function(
+        done) {
+        expect(function() {
+            const testdateRange = {
+                'endtime': 10,
+                'starttime': ''
+            };
+            return blocktool.dateRangeToBlockRange(
+                testdateRange);
+        }).to.throw(Error);
+        done();
+    });
+    test('dateRangeToBlockRange throws error on negatron', function(
+        done) {
+        expect(function() {
+            const testdateRange = {
+                'endtime': -10,
+                'starttime': 1
+            };
+            return blocktool.dateRangeToBlockRange(
+                testdateRange);
+        }).to.throw(Error);
+        done();
+    });
+    test(
+        'dateRangeToBlockRange throws error if low is higher than high',
+        function(done) {
+            expect(function() {
+                const testdateRange = {
+                    'endtime': 1,
+                    'starttime': 10
+                };
+                return blocktool.dateRangeToBlockRange(
+                    testdateRange);
+            }).to.throw(Error);
+            done();
+        });
+    test(
+        'dateRangeToBlockRange throws error if low > high (change param order)',
+        function(done) {
+            expect(function() {
+                const testdateRange = {
+                    'starttime': 10,
+                    'endtime': 1
+                };
+                return blocktool.dateRangeToBlockRange(
+                    testdateRange);
+            }).to.throw(Error);
+            done();
+        });
+    test('dateRangeToBlockRange throws error on missing high', function(
+        done) {
+        expect(function() {
+            const testdateRange = {
+                'starttime': 10
+            };
+            return blocktool.dateRangeToBlockRange(
+                testdateRange);
+        }).to.throw(Error);
+        done();
     });
 
+    test('blockRangeToBlockCount (magic)', function() {
+        const blockcountlow = 363398;
+        const blockcounthigh = 363400; //368596 Wed Aug  5 20:16:32 PDT 2015
+        return blocktool.blockRangeToBlockCount({
+            'blockcountlow': blockcountlow,
+            'blockcounthigh': blockcounthigh
+        }).then(function(blockCountArr) {
+            expect(blockCountArr).to.not.equal(
+                undefined);
+        });
+    });
+    test(
+        'blockRangeToBlockCount (throw error on missing blockcountlow)',
+        function(done) {
+            expect(function() {
+                const blockcounthigh = 363400; //368596 Wed Aug  5 20:16:32 PDT 2015
+                void blocktool.blockRangeToBlockCount({
+                    'blockcounthigh': blockcounthigh
+                }).to.throw(TypeError);
+            });
+            done();
+        });
+    test(
+        'blockRangeToBlockCount (throw error on missing blockcounthigh)',
+        function(done) {
+            expect(function() {
+                const blockcountlow = 363398; //368596 Wed Aug  5 20:16:32 PDT 2015
+                void blocktool.blockRangeToBlockCount({
+                    'blockcountlow': blockcountlow
+                }).to.throw(TypeError);
+            });
+            done();
+        });
+    test(
+        'blockRangeToBlockCount (blockRangeToBlockCount throws error on string)',
+        function(done) {
+            expect(function() {
+                const testblockrange = {
+                    'blockcountlow': 1,
+                    'blockcounthigh': "10"
+                };
+                void blocktool.blockRangeToBlockCount(
+                    testblockrange).to.throw(TypeError);
+            });
+            done();
+        });
+    test(
+        'blockRangeToBlockCount (throw error on missing blockcountlow)',
+        function(done) {
+            expect(function() {
+                const blockcountlow = 363398; //368596 Wed Aug  5 20:16:32 PDT 2015
+                return blocktool.blockRangeToBlockCount({
+                    'blockcountlow': blockcountlow
+                }).to.throw(TypeError);
+            });
+            done();
+        });
+
+    test(
+        'blockRangeToBlockCount (blockRangeToBlockCount throws error on decimal)',
+        function(done) {
+            expect(function() {
+                const testblockrange = {
+                    'blockcountlow': 1.123,
+                    'blockcounthigh': 10
+                };
+                void blocktool.blockRangeToBlockCount(
+                    testblockrange).to.throw(TypeError);
+            });
+            done();
+        });
+    test(
+        'blockRangeToBlockCount (blockRangeToBlockCount throws error on negative integer)',
+        function(done) {
+            expect(function() {
+                const testblockrange = {
+                    'blockcountlow': -10,
+                    'blockcounthigh': 10
+                };
+                void blocktool.blockRangeToBlockCount(
+                    testblockrange).to.throw(TypeError);
+            });
+            done();
+        });
+    test(
+        'blockRangeToBlockCount (blockRangeToBlockCount throws error if low > high)',
+        function(done) {
+            expect(function() {
+                const testblockrange = {
+                    'blockcountlow': 10,
+                    'blockcounthigh': 1
+                };
+                void blocktool.blockRangeToBlockCount(
+                    testblockrange).to.throw(TypeError);
+            });
+            done();
+        });
+    test(
+        'blockRangeToBlockCount (blockRangeToBlockCount low > high change param order)',
+        function(done) {
+            expect(function() {
+                const testblockrange = {
+                    'blockcounthigh': 1,
+                    'blockcountlow': 10
+                };
+                void blocktool.blockRangeToBlockCount(
+                    testblockrange).to.throw(TypeError);
+            });
+            done();
+        });
+
+    test('txidToTransactionSignature (magic)',
+        function(done) {
+            const txid =
+                '3b115dcc8a5d1ae060b9be8bdfc697155f6cf40f10bbfb8ab22d14306a9828cb';
+            return blocktool.txidToTransactionSignature(
+                txid).then(function(transactionsignature) {
+                expect(transactionsignature.inputdetail[
+                        0].value)
+                    .to.equal(0.01070851);
+                done();
+            });
+        });
     test('vinToInputDetail (magic)', function() {
         const vin = [{
             "txid": "35f244fe1c02d86695c662b4392ccede1403692d4bfc5f565930ba1fa9fe8e02",
@@ -119,6 +332,7 @@ suite('blocktool:', function() {
         }];
         const inputdetail = blocktool.vinToInputDetail(
             vin);
+        //console.log(inputdetail);
         return expect(inputdetail.length).to.equal(
             vin.length
         );
@@ -291,21 +505,10 @@ suite('blocktool:', function() {
             const callback = function(content) {
                 expect(content.inputdetail.length).to
                     .equal(5);
-                //console.log(content);
+                //logger.silly(content);
             };
             return blocktool.rawTransactionToTransactionSignature(
                 rawtransaction, callback);
-        });
-    test('txidToTransactionSignature (magic)',
-        function() {
-            const txid =
-                '3b115dcc8a5d1ae060b9be8bdfc697155f6cf40f10bbfb8ab22d14306a9828cb';
-            return blocktool.txidToTransactionSignature(
-                txid).then(function(transactionsignature) {
-                return expect(transactionsignature.inputdetail[
-                        0].value)
-                    .to.equal(0.01070851);
-            });
         });
     test('blockheaderToTime (magic)', function() {
         const blockheader = {
@@ -344,13 +547,12 @@ suite('blocktool:', function() {
     });
     test(
         'blockcountToBlockhash throws error on receiving string blockcount',
-        function(done) {
-            expect(function() {
+        function() {
+            return expect(function() {
                 const blockcount = "1";
                 return blocktool.blockCountToBlockhash(
                     blockcount);
             }).to.throw(TypeError);
-            done();
         });
 
     test('guess', function(done) {
@@ -485,6 +687,53 @@ suite('blocktool:', function() {
                 expect(vout.length).to.equal(
                     200);
                 done();
+            });
+    });
+
+
+    test(
+        'dateRangeToTransactionSignature first signature not null',
+        function() {
+            const starttime = 1435795200;
+            const endtime = 1435795800; //368596 Wed Aug  5 20:16:32 PDT 2015
+            return expect(blocktool.dateRangeToTransactionSignature({
+                'starttime': starttime,
+                'endtime': endtime
+            }).next()).to.not.equal(undefined);
+
+        });
+    test('txidToRawTransaction (magic)', function() {
+        const txid =
+            'b39fa6c39b99683ac8f456721b270786c627ecb246700888315991877024b983';
+        return blocktool.txidToRawTransaction(txid).then(
+            function(rawtransaction) {
+                expect(rawtransaction.txid).to.equal(
+                    txid);
+            });
+    });
+    test('txidToVout (magic)', function() {
+        const txid =
+            'b39fa6c39b99683ac8f456721b270786c627ecb246700888315991877024b983';
+        return blocktool.txidToVout(txid).then(
+            function(vout) {
+                expect(vout[0].value).to.equal(
+                    25.0402836);
+            });
+    });
+    test('vinItemToInputDetailItem (magic)', function() {
+        const vinitem = {
+            "txid": "7c9a20b31c89e025e9c031f0d67f3cdebe0091d9447f082a35cc9d076ba1eaf5",
+            "vout": 1,
+            "scriptSig": {
+                "asm": "30440220424540e65fe7dbae285a3e6d38a8c391295f3527eb0a317942fa4e189bf32a3302201320bf0eee6bb419f471ac761b7f6307f597d4643144b5a6cb3c426502cb1b2b[ALL] 04b41dd4782998ce381156736614a21838c36db8a3ca7d36a4813a8acebca53c90aabf056238662c5ee9fb4e7829e34072110f4f14daaf0bd477f7973a388842ae",
+                "hex": "4730440220424540e65fe7dbae285a3e6d38a8c391295f3527eb0a317942fa4e189bf32a3302201320bf0eee6bb419f471ac761b7f6307f597d4643144b5a6cb3c426502cb1b2b014104b41dd4782998ce381156736614a21838c36db8a3ca7d36a4813a8acebca53c90aabf056238662c5ee9fb4e7829e34072110f4f14daaf0bd477f7973a388842ae"
+            },
+            "sequence": 4294967295
+        };
+        return blocktool.vinItemToInputDetailItem(vinitem).then(
+            function(inputdetailitem) {
+                expect(inputdetailitem[0].value).to.equal(
+                    0.01033289);
             });
     });
 });

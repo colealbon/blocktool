@@ -5,7 +5,7 @@ const koa = require('koa'),
     router = require('koa-route'),
     views = require('co-views'),
     serve = require('koa-static'),
-    api = require('./index.js'),
+    api = require('./api.js'),
     path = require('path'),
     swagger = require('swagger-koa'),
     config = require(__dirname + "/config/options.js"),
@@ -48,7 +48,6 @@ app.use(swagger.init({
 }));
 
 app.use(serve(path.join(__dirname, 'public')));
-
 app.use(router.get('/', index));
 app.use(router.get('/blockcount', api.blockcount));
 app.use(router.get('/blocktime', api.blocktime));
