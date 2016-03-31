@@ -276,16 +276,25 @@ suite('blocktool:', function() {
             });
             done();
         });
-
     test('txidToTransactionSignature (magic)',
         function(done) {
             const txid =
-                '3b115dcc8a5d1ae060b9be8bdfc697155f6cf40f10bbfb8ab22d14306a9828cb';
+                'a7c75c4f0875b3c52e99214409402c7c2ba9c2f7dadb899e995a2085d9d5fe54';
+            return blocktool.txidToTransactionSignature(
+                txid).then(function(transactionsignature) {
+                expect(transactionsignature.inputdetail[0]).to.equal(undefined);
+                done();
+            });
+        });
+    test('txidToTransactionSignature (magic)',
+        function(done) {
+            const txid =
+                '3119a7e7097c3c30405e8bc6b3ecd62bf45836c949dd027995a511203ad6006a';
             return blocktool.txidToTransactionSignature(
                 txid).then(function(transactionsignature) {
                 expect(transactionsignature.inputdetail[
                         0].value)
-                    .to.equal(0.01070851);
+                    .to.equal(0.56229);
                 done();
             });
         });
