@@ -35,3 +35,7 @@ node_modules
 config/options.js
 scratch.js
 
+batch.sh
+options
+scratch.sh
+output

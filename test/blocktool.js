@@ -45,7 +45,7 @@ suite('blocktool:', function() {
                 );
             });
     });
-    test('dateRangeToBlockRange (magic)', function () {
+    test('dateRangeToBlockRange (magic)', function() {
         const starttime = 1435795200;
         const endtime = 1435795800; //368596 Wed Aug  5 20:16:32 PDT 2015
         return blocktool.dateRangeToBlockRange({
@@ -282,7 +282,8 @@ suite('blocktool:', function() {
                 'a7c75c4f0875b3c52e99214409402c7c2ba9c2f7dadb899e995a2085d9d5fe54';
             return blocktool.txidToTransactionSignature(
                 txid).then(function(transactionsignature) {
-                expect(transactionsignature.inputdetail[0]).to.equal(undefined);
+                expect(transactionsignature.inputdetail[0])
+                    .to.equal(undefined);
                 done();
             });
         });
@@ -700,18 +701,6 @@ suite('blocktool:', function() {
             });
     });
 
-
-    test(
-        'dateRangeToTransactionSignature first signature not null',
-        function() {
-            const starttime = 1435795200;
-            const endtime = 1435795800; //368596 Wed Aug  5 20:16:32 PDT 2015
-            return expect(blocktool.dateRangeToTransactionSignature({
-                'starttime': starttime,
-                'endtime': endtime
-            }).next()).to.not.equal(undefined);
-
-        });
     test('txidToRawTransaction (magic)', function() {
         const txid =
             'b39fa6c39b99683ac8f456721b270786c627ecb246700888315991877024b983';
