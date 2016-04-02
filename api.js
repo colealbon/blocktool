@@ -111,6 +111,36 @@ exports.transactionsignature = function*() {
 
 /**
  * @swagger
+ * path: /txid
+ * operations:
+ *   -  httpMethod: GET
+ *      summary: array of txid for a blockhash.
+ *      notes: Returns txid json
+ *      responseClass: Txid
+ *      nickname: txid
+ *      parameters:
+ *        - name: blockhash
+ *          description: 64 character string
+ *          paramType: query
+ *          required: true
+ *          dataType: array
+ */
+
+exports.txid = function*() {
+    const query = this.request.query;
+    const blockhash = query.blockhash;
+    this.body = {
+        'blockhash': blockhash,
+        'txid': yield blocktool.blockHashToTxid(
+            blockhash).then(function(txidArr) {
+            return txidArr;
+        }),
+        'timestamp': new Date().getTime()
+    };
+};
+
+/**
+ * @swagger
  * models:
  *   User:
  *     id: User
@@ -136,6 +166,18 @@ exports.transactionsignature = function*() {
  *         required: true
  *       blockcount:
  *         type: integer
+ *         required: true
+ *       timestamp:
+ *         type: integer
+ *         required: true
+ *   Txid:
+ *     id: Txid
+ *     properties:
+ *       blockhash:
+ *         type: String
+ *         required: true
+ *       txid:
+ *         type: array
  *         required: true
  *       timestamp:
  *         type: integer
