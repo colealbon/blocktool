@@ -11,6 +11,7 @@
     "co-views": "^2.1.0",
     "fantasy-lenses": "^0.1.1",
     "koa": "^1.2.0",
+    "koa-cluster": "^0.2.2",
     "koa-force-ssl": "0.0.5",
     "koa-logger": "^1.3.0",
     "koa-render": "^0.2.1",

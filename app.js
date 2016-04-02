@@ -14,7 +14,7 @@ const koa = require('koa'),
     https = require('https'),
     forceSSL = require('koa-force-ssl');
 
-const app = koa();
+const app = module.exports = koa();
 
 app.use(logger());
 app.use(forceSSL());
