@@ -133,12 +133,17 @@ exports.transactionsignature = function*() {
 
 exports.txid = function*() {
     const query = this.request.query;
-    const blockhash = (query.blockcount) ?
-        yield blocktool.blockCountToBlockhash(parseInt(query.blockcount)).then(function(
+    const blockcount = (query.blockcount) ?
+        parseInt(query.blockcount) :
+        yield blocktool.getBlockCount().then(function(blockcount){
+            return parseInt(blockcount);
+        });
+    const blockhash = (query.blockhash) ?
+        query.blockhash:
+        yield blocktool.blockCountToBlockhash(blockcount).then(function(
             blockhash) {
             return blockhash;
-        }):
-        query.blockhash;
+        });
     this.body = {
         'blockhash': blockhash,
         'txid': yield blocktool.blockHashToTxid(

@@ -307,7 +307,7 @@ suite('api:', function() {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
         const req = https.request({
             host: config.app_host,
-            path: '/txid?blockcount=405485&api_key=special-key&api_key=special-key',
+            path: '/txid?blockcount=405485&api_key=special-key',
             port: config.https_port,
             rejectUnauthorized: false,
             requestCert: false,
@@ -337,6 +337,40 @@ suite('api:', function() {
                             cheers.html()).txid
                         .length
                     );
+                    assert.isBelow(
+                        1458534660, JSON
+                        .parse(
+                            cheers.html()).timestamp
+                    );
+                }
+                done();
+            });
+        });
+        req.end();
+    });
+    test('/txid with no param', function(done) {
+        process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+        const req = https.request({
+            host: config.app_host,
+            path: '/txid?api_key=special-key',
+            port: config.https_port,
+            rejectUnauthorized: false,
+            requestCert: false,
+            agent: false
+        }, function(res) {
+            res.setEncoding('utf8');
+            let spool = '';
+            res.on('data', function(data) {
+                spool = spool + data;
+            });
+            res.on('end', function() {
+                assert.equal(res.statusCode,
+                    200);
+                if (res.statusCode == 200) {
+                    const cheers = cheerio.load(
+                        spool, {
+                            decodeEntities: false
+                        });
                     assert.isBelow(
                         1458534660, JSON
                         .parse(
