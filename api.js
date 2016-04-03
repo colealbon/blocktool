@@ -122,13 +122,23 @@ exports.transactionsignature = function*() {
  *        - name: blockhash
  *          description: 64 character string
  *          paramType: query
- *          required: true
- *          dataType: array
+ *          required: false
+ *          dataType: string
+ *        - name: blockcount
+ *          description: 64 character string
+ *          paramType: query
+ *          required: false
+ *          dataType: integer
  */
 
 exports.txid = function*() {
     const query = this.request.query;
-    const blockhash = query.blockhash;
+    const blockhash = (query.blockcount) ?
+        yield blocktool.blockCountToBlockhash(parseInt(query.blockcount)).then(function(
+            blockhash) {
+            return blockhash;
+        }):
+        query.blockhash;
     this.body = {
         'blockhash': blockhash,
         'txid': yield blocktool.blockHashToTxid(
