@@ -303,7 +303,49 @@ suite('api:', function() {
         });
         req.end();
     });
-
-
-
+    test('/txid with blockhash param', function(done) {
+        process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+        const req = https.request({
+            host: config.app_host,
+            path: '/txid?blockcount=405485&api_key=special-key&api_key=special-key',
+            port: config.https_port,
+            rejectUnauthorized: false,
+            requestCert: false,
+            agent: false
+        }, function(res) {
+            res.setEncoding('utf8');
+            let spool = '';
+            res.on('data', function(data) {
+                spool = spool + data;
+            });
+            res.on('end', function() {
+                assert.equal(res.statusCode,
+                    200);
+                if (res.statusCode == 200) {
+                    const cheers = cheerio.load(
+                        spool, {
+                            decodeEntities: false
+                        });
+                    assert.equal(
+                        '000000000000000003570a5bdbe8a21c50d0153e7912c8ec27d6ee3f7fa0c65e',
+                        JSON
+                        .parse(
+                            cheers.html()).blockhash
+                    );
+                    assert.equal(2201, JSON
+                        .parse(
+                            cheers.html()).txid
+                        .length
+                    );
+                    assert.isBelow(
+                        1458534660, JSON
+                        .parse(
+                            cheers.html()).timestamp
+                    );
+                }
+                done();
+            });
+        });
+        req.end();
+    });
 });
