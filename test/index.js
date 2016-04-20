@@ -75,6 +75,17 @@ suite('index:', function() {
                         1456714932435,
                         cheers('#pulsetime')
                         .text());
+                    assert.isBelow(
+                        1456714932435,
+                        cheers('#blocktime')
+                        .text());
+                    assert.isBelow(
+                        408083,
+                        cheers(
+                            '#blockcount')
+                        .text());
+
+
                 }
                 done();
             });

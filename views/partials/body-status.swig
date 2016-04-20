@@ -5,4 +5,10 @@
 <li>
 timestamp: <span id="pulsetime" class="pulsetime">{{ timestamp }}</span>
 </li>
+<li>
+blockcount: <span id="blockcount" class="blockcount">{{ blockcount }}</span>
+</li>
+<li>
+blocktime: <span id="blocktime" class="blocktime">{{ blocktime }}</span>
+</li>
 </ul>

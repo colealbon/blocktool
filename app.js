@@ -12,7 +12,8 @@ const koa = require('koa'),
     logger = require('koa-logger'),
     fs = require('fs'),
     https = require('https'),
-    forceSSL = require('koa-force-ssl');
+    forceSSL = require('koa-force-ssl'),
+    blocktool = require('./lib/blocktool.js');
 
 const app = module.exports = koa();
 
@@ -33,7 +34,18 @@ const render = views(__dirname + '/views', {
 function* index() {
     this.body = yield render('index.swig', {
         'timestamp': new Date().getTime(),
-        'app_name': config.app_name
+        'app_name': config.app_name,
+        'blockcount': yield blocktool.getBlockCount().then(function(
+            blockcount) {
+            return blockcount;
+        }),
+        'blocktime': yield blocktool.getLatestBlockTime().then(
+            function(
+                blocktime) {
+                //return blocktime;
+                var dt = new Date(0);
+                return dt.setUTCSeconds(blocktime);
+            }),
     });
 }
 
@@ -55,5 +67,6 @@ app.use(router.get('/transactionsignature', api.transactionsignature));
 app.use(router.get('/txid', api.txid));
 app.use(router.get('/blockhash', api.blockhash));
 
-const server = https.createServer(ssloptions, app.callback()).listen(config.https_port);
+const server = https.createServer(ssloptions, app.callback()).listen(
+    config.https_port);
 module.exports.server = server;

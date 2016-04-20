@@ -26,8 +26,8 @@ const blocktool = require('./lib/blocktool.js');
  */
 
 exports.blockcount = function*() {
-    const query = this.request.query;
-    const targettime = parseInt(query.targettime);
+    const query = this.request ? this.request.query : undefined;
+    const targettime = query ? parseInt(query.targettime) : null;
     this.body = {
         'blockcount': (targettime) ?
             yield blocktool.timeToBlockCount(targettime).then(function(
@@ -37,7 +37,7 @@ exports.blockcount = function*() {
                 blockcount) {
                 return blockcount;
             }),
-        'timestamp': new Date().getTime()
+        'timestamp': new Date(1461124120000).getTime()
     };
 };
 
@@ -135,11 +135,11 @@ exports.txid = function*() {
     const query = this.request.query;
     const blockcount = (query.blockcount) ?
         parseInt(query.blockcount) :
-        yield blocktool.getBlockCount().then(function(blockcount){
+        yield blocktool.getBlockCount().then(function(blockcount) {
             return parseInt(blockcount);
         });
     const blockhash = (query.blockhash) ?
-        query.blockhash:
+        query.blockhash :
         yield blocktool.blockCountToBlockhash(blockcount).then(function(
             blockhash) {
             return blockhash;
