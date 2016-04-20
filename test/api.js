@@ -169,6 +169,52 @@ suite('api:', function() {
         });
         req.end();
     });
+
+    test('/blockhash  with params JSON validation', function(done) {
+        process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+        const req = https.request({
+            host: config.app_host,
+            path: '/blockhash?blockcount=408060&api_key=special-key',
+            port: config.https_port,
+            rejectUnauthorized: false,
+            requestCert: false,
+            agent: false
+        }, function(res) {
+            res.setEncoding('utf8');
+            let spool = '';
+            res.on('data', function(data) {
+                spool = spool + data;
+            });
+            res.on('end', function() {
+                assert.equal(res.statusCode,
+                    200);
+                if (res.statusCode == 200) {
+                    const cheers = cheerio.load(
+                        spool, {
+                            decodeEntities: false
+                        });
+                    assert.equal(
+                        "0000000000000000058a13426f63efb3c7b7407fb2d60dbd5008ea6983ec55a9",
+                        JSON
+                        .parse(
+                            cheers.html()).blockhash
+                    );
+                    assert.equal(408060, JSON
+                        .parse(
+                            cheers.html()).blockcount
+                    );
+                    assert.isBelow(
+                        1458534660, JSON
+                        .parse(
+                            cheers.html()).timestamp
+                    );
+                }
+                done();
+            });
+        });
+        req.end();
+    });
+
     test('/blocktime with params JSON validation', function(done) {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
         const req = https.request({
@@ -303,12 +349,11 @@ suite('api:', function() {
         });
         req.end();
     });
-
-    test('/blockhash with blockcount param', function(done) {
+    test('/txid with blockhash param', function(done) {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
         const req = https.request({
             host: config.app_host,
-            path: '/blockhash?blockcount=1&api_key=special-key',
+            path: '/txid?blockcount=405485&api_key=special-key',
             port: config.https_port,
             rejectUnauthorized: false,
             requestCert: false,
@@ -328,14 +373,15 @@ suite('api:', function() {
                             decodeEntities: false
                         });
                     assert.equal(
-                        '00000000839a8e6886ab5951d76f411475428afc90947ee320161bbf18eb6048',
+                        '000000000000000003570a5bdbe8a21c50d0153e7912c8ec27d6ee3f7fa0c65e',
                         JSON
                         .parse(
                             cheers.html()).blockhash
                     );
-                    assert.equal(1, JSON
+                    assert.equal(2201, JSON
                         .parse(
-                            cheers.html()).blockcount
+                            cheers.html()).txid
+                        .length
                     );
                     assert.isBelow(
                         1458534660, JSON
@@ -348,5 +394,38 @@ suite('api:', function() {
         });
         req.end();
     });
-
+    test('/txid with no param', function(done) {
+        process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+        const req = https.request({
+            host: config.app_host,
+            path: '/txid?api_key=special-key',
+            port: config.https_port,
+            rejectUnauthorized: false,
+            requestCert: false,
+            agent: false
+        }, function(res) {
+            res.setEncoding('utf8');
+            let spool = '';
+            res.on('data', function(data) {
+                spool = spool + data;
+            });
+            res.on('end', function() {
+                assert.equal(res.statusCode,
+                    200);
+                if (res.statusCode == 200) {
+                    const cheers = cheerio.load(
+                        spool, {
+                            decodeEntities: false
+                        });
+                    assert.isBelow(
+                        1458534660, JSON
+                        .parse(
+                            cheers.html()).timestamp
+                    );
+                }
+                done();
+            });
+        });
+        req.end();
+    });
 });
