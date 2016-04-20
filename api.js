@@ -141,6 +141,36 @@ exports.txid = function*() {
 
 /**
  * @swagger
+ * path: /blockhash
+ * operations:
+ *   -  httpMethod: GET
+ *      summary: blockhash for a given block count
+ *      notes: Returns blockhash json
+ *      responseClass: Blockhash
+ *      nickname: blockhash
+ *      parameters:
+ *        - name: blockcount
+ *          description: Integer
+ *          paramType: query
+ *          required: true
+ *          dataType: string
+ */
+
+exports.blockhash = function*() {
+    const query = this.request.query;
+    const blockcount = parseInt(query.blockcount, 10);
+    this.body = {
+        'blockcount': blockcount,
+        'blockhash': yield blocktool.blockCountToBlockhash(
+            blockcount).then(function(blockhash) {
+            return blockhash;
+        }),
+        'timestamp': new Date().getTime()
+    };
+};
+
+/**
+ * @swagger
  * models:
  *   User:
  *     id: User
@@ -154,6 +184,15 @@ exports.txid = function*() {
  *     properties:
  *       blockcount:
  *         type: integer
+ *         required: true
+ *       timestamp:
+ *         type: integer
+ *         required: true
+ *   Blockhash:
+ *     id: Blockhash
+ *     properties:
+ *       blockhash:
+ *         type: string
  *         required: true
  *       timestamp:
  *         type: integer

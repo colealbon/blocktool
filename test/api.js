@@ -304,6 +304,49 @@ suite('api:', function() {
         req.end();
     });
 
-
+    test('/blockhash with blockcount param', function(done) {
+        process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+        const req = https.request({
+            host: config.app_host,
+            path: '/blockhash?blockcount=1&api_key=special-key',
+            port: config.https_port,
+            rejectUnauthorized: false,
+            requestCert: false,
+            agent: false
+        }, function(res) {
+            res.setEncoding('utf8');
+            let spool = '';
+            res.on('data', function(data) {
+                spool = spool + data;
+            });
+            res.on('end', function() {
+                assert.equal(res.statusCode,
+                    200);
+                if (res.statusCode == 200) {
+                    const cheers = cheerio.load(
+                        spool, {
+                            decodeEntities: false
+                        });
+                    assert.equal(
+                        '00000000839a8e6886ab5951d76f411475428afc90947ee320161bbf18eb6048',
+                        JSON
+                        .parse(
+                            cheers.html()).blockhash
+                    );
+                    assert.equal(1, JSON
+                        .parse(
+                            cheers.html()).blockcount
+                    );
+                    assert.isBelow(
+                        1458534660, JSON
+                        .parse(
+                            cheers.html()).timestamp
+                    );
+                }
+                done();
+            });
+        });
+        req.end();
+    });
 
 });

@@ -53,6 +53,7 @@ app.use(router.get('/blockcount', api.blockcount));
 app.use(router.get('/blocktime', api.blocktime));
 app.use(router.get('/transactionsignature', api.transactionsignature));
 app.use(router.get('/txid', api.txid));
+app.use(router.get('/blockhash', api.blockhash));
 
 const server = https.createServer(ssloptions, app.callback()).listen(config.https_port);
 module.exports.server = server;
