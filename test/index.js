@@ -12,7 +12,6 @@ const https = require('https');
 const cheerio = require('cheerio');
 
 suite('index:', function() {
-
     let server = require('../app.js');
     const config = require(__dirname + '/../config/options.js');
     if (!server) server = https.createServer(ssloptions);
@@ -84,8 +83,6 @@ suite('index:', function() {
                         cheers(
                             '#blockcount')
                         .text());
-
-
                 }
                 done();
             });
