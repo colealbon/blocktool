@@ -86,7 +86,7 @@ suite('blocktool:', function() {
         expect(function() {
             const testdateRange = {
                 'starttime': 1,
-                'endtime': "10"
+                'endtime': "ten"
             };
             return blocktool.dateRangeToBlockRange(
                 testdateRange);

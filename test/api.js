@@ -219,7 +219,7 @@ suite('api:', function() {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
         const req = https.request({
             host: config.app_host,
-            path: '/blockcount?targettime=1358694696&api_key=special-key',
+            path: '/blockcount?starttime=1358694696&api_key=special-key',
             port: config.https_port,
             rejectUnauthorized: false,
             requestCert: false,

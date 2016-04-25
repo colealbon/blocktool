@@ -1,3 +1,4 @@
+'use strict';
 /*eslint-env node, mocha, es6*/
 const blocktool = require('./lib/blocktool.js');
 
@@ -18,8 +19,13 @@ const blocktool = require('./lib/blocktool.js');
  *      responseClass: Blockcount
  *      nickname: blockcount
  *      parameters:
- *        - name: targettime
- *          description: unix timestamp
+ *        - name: starttime
+ *          description: unix timestamp (10 digits)
+ *          paramType: query
+ *          required: false
+ *          dataType: integer
+ *        - name: endtime
+ *          description: unix timestamp (10 digits)
  *          paramType: query
  *          required: false
  *          dataType: integer
@@ -27,17 +33,22 @@ const blocktool = require('./lib/blocktool.js');
 
 exports.blockcount = function*() {
     const query = this.request ? this.request.query : undefined;
-    const targettime = query ? parseInt(query.targettime) : null;
+    let starttime;
+    if (query.starttime === undefined && query.endtime === undefined) {
+        starttime = yield blocktool.getLatestBlockTime().then(
+            function(blockcount) {
+                return parseInt(blockcount);
+            });
+    } else {
+        starttime = parseInt(query.starttime);
+    }
+    const endtime = query ? parseInt(query.endtime) : null;
     this.body = {
-        'blockcount': (targettime) ?
-            yield blocktool.timeToBlockCount(targettime).then(function(
-                blockcount) {
-                return blockcount;
-            }) : yield blocktool.getBlockCount().then(function(
-                blockcount) {
-                return blockcount;
-            }),
-        'timestamp': new Date(1461124120000).getTime()
+        'blockcount': yield blocktool.dateRangeToBlockCount({
+            'starttime': starttime || endtime,
+            'endtime': endtime || starttime
+        }),
+        'timestamp': new Date().getTime()
     };
 };
 
@@ -64,18 +75,21 @@ exports.blocktime = function*() {
 
     this.body = {
         'blocktime': (blockcount) ?
-            yield blocktool.blockCountToTime(blockcount).then(function(
-                blocktime) {
-                return blocktime;
-            }) : yield blocktool.getLatestBlockTime().then(function(
-                blocktime) {
-                return blocktime;
-            }),
+            yield blocktool.blockCountToTime(blockcount).then(
+                function(
+                    blocktime) {
+                    return blocktime;
+                }) : yield blocktool.getLatestBlockTime().then(
+                function(
+                    blocktime) {
+                    return blocktime;
+                }),
         'blockcount': (blockcount) ?
-            blockcount : yield blocktool.getBlockCount().then(function(
-                blockcount) {
-                return blockcount;
-            }),
+            blockcount : yield blocktool.getBlockCount().then(
+                function(
+                    blockcount) {
+                    return blockcount;
+                }),
         'timestamp': new Date().getTime()
     };
 };
@@ -140,10 +154,11 @@ exports.txid = function*() {
         });
     const blockhash = (query.blockhash) ?
         query.blockhash :
-        yield blocktool.blockCountToBlockhash(blockcount).then(function(
-            blockhash) {
-            return blockhash;
-        });
+        yield blocktool.blockCountToBlockhash(blockcount).then(
+            function(
+                blockhash) {
+                return blockhash;
+            });
     this.body = {
         'blockhash': blockhash,
         'txid': yield blocktool.blockHashToTxid(
