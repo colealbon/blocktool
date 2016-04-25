@@ -18,9 +18,7 @@
     socket.on('pulsetime', function(timestamp) {
         const timestampStr = new Date(timestamp).toLocaleString();
         document.getElementById('pulsetime').innerHTML = timestampStr;
-        if (LATEST_BLOCKTIME === undefined) {
-            LATEST_BLOCKTIME = Date.parse(document.getElementById('blocktime').innerHTML) / 1000;
-        }
+        LATEST_BLOCKTIME = Date.parse(document.getElementById('blocktime').innerHTML) / 1000;
         const seconds_since_last_block = parseInt((timestamp / 1000), 10) - LATEST_BLOCKTIME
         var time_since_last_block = new Date(null);
         time_since_last_block.setSeconds(seconds_since_last_block);
