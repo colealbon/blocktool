@@ -83,6 +83,10 @@ suite('index:', function() {
                         cheers(
                             '#blockcount')
                         .text());
+                    assert.ok(cheers(
+                            '.time_since_last_block',
+                            '#status')
+                        .text());
                 }
                 done();
             });

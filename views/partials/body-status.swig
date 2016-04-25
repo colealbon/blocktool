@@ -11,4 +11,7 @@ blockcount: <span id="blockcount" class="blockcount">{{ blockcount }}</span>
 <li>
 blocktime: <span id="blocktime" class="blocktime">{{ blocktime }}</span>
 </li>
+<li>
+time since last block: <span id="time_since_last_block" class="time_since_last_block">{{ time_since_last_block }}</span>
+</li>
 </ul>

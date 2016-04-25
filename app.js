@@ -47,7 +47,22 @@ function* index() {
                 const dt = new Date(0);
                 return dt.setUTCSeconds(blocktime);
             }
-        )
+        ),
+        'time_since_last_block': yield blocktool.getLatestBlockTime()
+            .then(
+                function(blocktime) {
+                    const time_since_last_block = new Date(0);
+                    const seconds_since_last_block = parseInt(new Date()
+                            .getTime() /
+                            1000) -
+                        blocktime;
+                    time_since_last_block.setSeconds(
+                        seconds_since_last_block);
+                    return time_since_last_block.toISOString()
+                        .substr(
+                            11, 8);
+                }
+            )
     });
 }
 
@@ -114,7 +129,8 @@ io.on('connection', function(socket) {
         blocktool.getLatestBlockTime().then(function handleBlockTime(
             blocktime) {
             if (blocktime !== oldBlockTime) {
-                io.volatile.emit('blocktime', blocktime);
+                io.volatile.emit('blocktime',
+                    blocktime);
                 oldBlockTime = blocktime;
             }
         });
