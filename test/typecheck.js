@@ -541,19 +541,20 @@ suite('typecheck:', function() {
         done) {
         expect(function() {
             const testInputDetail = [{
-                "value": 0.957,
-                "n": 0,
-                "scriptPubKey": {
-                    "asm": "OP_DUP OP_HASH160 0e5edf60129c072efcd75810a2dec327ad4c27ac OP_EQUALVERIFY OP_CHECKSIG",
-                    "hex": "76a9140e5edf60129c072efcd75810a2dec327ad4c27ac88ac",
-                    "reqSigs": 1,
-                    "type": "pubkeyhash",
-                    "addresses": [
-                        "12Jz7YhtTpLZDAbdE8f2Y2JwEkj7YzKvCm"
+                value: 0.01033289,
+                n: 1,
+                scriptPubKey: {
+                    asm: 'OP_DUP OP_HASH160 1b3c724281b3a91a4d36dd65882cb557d2081453 OP_EQUALVERIFY OP_CHECKSIG',
+                    hex: '76a9141b3c724281b3a91a4d36dd65882cb557d208145388ac',
+                    reqSigs: 1,
+                    type: 'pubkeyhash',
+                    addresses: [
+                        '13V1f4hsA7MBM1xRRKN4gxsx3suHi6Jhhk'
                     ]
                 },
-                "destroy_start": 1435791969,
-                "txid": "fbd378eed705fb1331e2310ce1058dcd9c4254be5db5794aab11a17f2435b697"
+                destroy_start: 1399696133,
+                txid: '7c9a20b31c89e025e9c031f0d67f3cdebe0091d9447f082a35cc9d076ba1eaf5',
+                destroy_stop: 1399703554
             }];
             return typecheck.inputDetailGuard(
                 testInputDetail);
@@ -611,19 +612,20 @@ suite('typecheck:', function() {
             done) {
             expect(function() {
                 const testInputDetailItem = {
-                    "value": 0.957,
-                    "n": 0,
-                    "scriptPubKey": {
-                        "asm": "OP_DUP OP_HASH160 0e5edf60129c072efcd75810a2dec327ad4c27ac OP_EQUALVERIFY OP_CHECKSIG",
-                        "hex": "76a9140e5edf60129c072efcd75810a2dec327ad4c27ac88ac",
-                        "reqSigs": 1,
-                        "type": "pubkeyhash",
-                        "addresses": [
-                            "12Jz7YhtTpLZDAbdE8f2Y2JwEkj7YzKvCm"
+                    value: 0.01033289,
+                    n: 1,
+                    scriptPubKey: {
+                        asm: 'OP_DUP OP_HASH160 1b3c724281b3a91a4d36dd65882cb557d2081453 OP_EQUALVERIFY OP_CHECKSIG',
+                        hex: '76a9141b3c724281b3a91a4d36dd65882cb557d208145388ac',
+                        reqSigs: 1,
+                        type: 'pubkeyhash',
+                        addresses: [
+                            '13V1f4hsA7MBM1xRRKN4gxsx3suHi6Jhhk'
                         ]
                     },
-                    "destroy_start": 1435791969,
-                    "txid": "fbd378eed705fb1331e2310ce1058dcd9c4254be5db5794aab11a17f2435b697"
+                    destroy_start: 1399696133,
+                    txid: '7c9a20b31c89e025e9c031f0d67f3cdebe0091d9447f082a35cc9d076ba1eaf5',
+                    destroy_stop: 1399703554
                 };
                 return typecheck.inputDetailItemGuard(
                     testInputDetailItem);
@@ -658,25 +660,49 @@ suite('typecheck:', function() {
             done) {
             expect(function() {
                 const testInputDetailItem = {
-                    "value": 0.957,
-                    "n": 0,
-                    "scriptPubKey": {
-                        "asm": "OP_DUP OP_HASH160 0e5edf60129c072efcd75810a2dec327ad4c27ac OP_EQUALVERIFY OP_CHECKSIG",
-                        "hex": "76a9140e5edf60129c072efcd75810a2dec327ad4c27ac88ac",
-                        "reqSigs": 1,
-                        "type": "pubkeyhash",
-                        "addresses": [
-                            "12Jz7YhtTpLZDAbdE8f2Y2JwEkj7YzKvCm"
+                    value: 0.01033289,
+                    n: 1,
+                    scriptPubKey: {
+                        asm: 'OP_DUP OP_HASH160 1b3c724281b3a91a4d36dd65882cb557d2081453 OP_EQUALVERIFY OP_CHECKSIG',
+                        hex: '76a9141b3c724281b3a91a4d36dd65882cb557d208145388ac',
+                        reqSigs: 1,
+                        type: 'pubkeyhash',
+                        addresses: [
+                            '13V1f4hsA7MBM1xRRKN4gxsx3suHi6Jhhk'
                         ]
                     },
-                    "txid": "fbd378eed705fb1331e2310ce1058dcd9c4254be5db5794aab11a17f2435b697"
+                    txid: '7c9a20b31c89e025e9c031f0d67f3cdebe0091d9447f082a35cc9d076ba1eaf5',
+                    destroy_stop: 1399703554
                 };
                 return typecheck.inputDetailItemGuard(
                     testInputDetailItem);
             }).to.throw(Error);
             done();
         });
-
+    test('inputDetailItemGuard throws on missing destroy_stop',
+        function(
+            done) {
+            expect(function() {
+                const testInputDetailItem = {
+                    value: 0.01033289,
+                    n: 1,
+                    scriptPubKey: {
+                        asm: 'OP_DUP OP_HASH160 1b3c724281b3a91a4d36dd65882cb557d2081453 OP_EQUALVERIFY OP_CHECKSIG',
+                        hex: '76a9141b3c724281b3a91a4d36dd65882cb557d208145388ac',
+                        reqSigs: 1,
+                        type: 'pubkeyhash',
+                        addresses: [
+                            '13V1f4hsA7MBM1xRRKN4gxsx3suHi6Jhhk'
+                        ]
+                    },
+                    destroy_start: 1399696133,
+                    txid: '7c9a20b31c89e025e9c031f0d67f3cdebe0091d9447f082a35cc9d076ba1eaf5'
+                };
+                return typecheck.inputDetailItemGuard(
+                    testInputDetailItem);
+            }).to.throw(Error);
+            done();
+        });
     test('guessGuard does nothing with good guess', function(
         done) {
         expect(function() {
