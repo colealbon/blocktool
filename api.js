@@ -222,27 +222,15 @@ exports.blockhash = function*() {
             'timestamp': new Date().getTime()
         };
     } else {
-        if (blockcount.isNan) {
-            blocktool.getBlockCount().then(function(blockcount) {
-                this.body = {
-                    'blockcount': blockcount,
-                    'blockhash': blocktool.blockCountToBlockHash(
-                        blockcount),
-                    'timestamp': new Date().getTime()
-
-                };
-            });
-        } else {
-            this.body = {
-                'blockcount': blockcount,
-                'blockhash': yield blocktool.blockCountToBlockhash(
-                    blockcount).then(function(
-                    blockhash) {
-                    return blockhash;
-                }),
-                'timestamp': new Date().getTime()
-            };
-        }
+        this.body = {
+            'blockcount': blockcount,
+            'blockhash': yield blocktool.blockCountToBlockhash(
+                blockcount).then(function(
+                blockhash) {
+                return blockhash;
+            }),
+            'timestamp': new Date().getTime()
+        };
     }
 };
 
