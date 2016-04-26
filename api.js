@@ -31,7 +31,7 @@ const blocktool = require('./lib/blocktool.js');
  *          dataType: integer
  */
 
-exports.blockcount = function*() {
+exports.blockcount = function* blockcount() {
     const query = this.request ? this.request.query : undefined;
     let starttime;
     if (query.starttime === undefined && query.endtime === undefined) {
@@ -71,7 +71,7 @@ exports.blockcount = function*() {
  *          dataType: integer
  */
 
-exports.blocktime = function*() {
+exports.blocktime = function* blocktime() {
     const query = this.request.query;
     const blockcount = parseInt(query.blockcount);
 
@@ -113,7 +113,7 @@ exports.blocktime = function*() {
  *          dataType: string
  */
 
-exports.transactionsignature = function*() {
+exports.transactionsignature = function* transactionsignature() {
     const query = this.request.query;
     const txid = query.txid;
     this.body = {
@@ -147,7 +147,7 @@ exports.transactionsignature = function*() {
  *          dataType: integer
  */
 
-exports.txid = function*() {
+exports.txid = function* txid() {
     const query = this.request.query;
     const blockcount = (query.blockcount) ?
         parseInt(query.blockcount) :
@@ -198,7 +198,7 @@ exports.txid = function*() {
  *          dataType: integer
  */
 
-exports.blockhash = function*() {
+exports.blockhash = function* blockhash() {
     const query = this.request ? this.request.query : undefined;
     const blockcount = (query) ? parseInt(query.blockcount, 10) : undefined;
     if (isNaN(blockcount)) {
