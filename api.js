@@ -44,6 +44,8 @@ exports.blockcount = function*() {
     }
     const endtime = query ? parseInt(query.endtime) : null;
     this.body = {
+        'starttime': starttime,
+        'endtime': endtime,
         'blockcount': yield blocktool.dateRangeToBlockCount({
             'starttime': starttime || endtime,
             'endtime': endtime || starttime
@@ -182,21 +184,64 @@ exports.txid = function*() {
  *        - name: blockcount
  *          description: Integer
  *          paramType: query
- *          required: true
+ *          required: false
  *          dataType: string
+ *        - name: starttime
+ *          description: unix timestamp (10 digits)
+ *          paramType: query
+ *          required: false
+ *          dataType: integer
+ *        - name: endtime
+ *          description: unix timestamp (10 digits)
+ *          paramType: query
+ *          required: false
+ *          dataType: integer
  */
 
 exports.blockhash = function*() {
-    const query = this.request.query;
-    const blockcount = parseInt(query.blockcount, 10);
-    this.body = {
-        'blockcount': blockcount,
-        'blockhash': yield blocktool.blockCountToBlockhash(
-            blockcount).then(function(blockhash) {
-            return blockhash;
-        }),
-        'timestamp': new Date().getTime()
-    };
+    const query = this.request ? this.request.query : undefined;
+    const blockcount = (query) ? parseInt(query.blockcount, 10) : undefined;
+    console.log(blockcount);
+    if (isNaN(blockcount)) {
+        let starttime;
+        if (query.starttime === undefined && query.endtime === undefined) {
+            starttime = yield blocktool.getLatestBlockTime().then(
+                function(blocktime) {
+                    return parseInt(blocktime);
+                });
+        } else {
+            starttime = parseInt(query.starttime);
+        }
+        const endtime = query ? parseInt(query.endtime) : null;
+        this.body = {
+            'starttime': starttime || endtime,
+            'endtime': endtime || starttime,
+            'blockhash': yield blocktool.dateRangeToBlockHash({
+                'starttime': starttime || endtime,
+                'endtime': endtime || starttime
+            }),
+            'timestamp': new Date().getTime()
+        };
+    } else {
+        console.log('*** blockcount', blockcount)
+        if (blockcount.isNan) {
+            console.log('*** nan');
+            blockcount = getBlockCount().then(function(blockcount) {
+                console.log(blockcount)
+                return blockcount;
+            });
+        } else {
+            console.log(blockcount)
+            this.body = {
+                'blockcount': blockcount,
+                'blockhash': yield blocktool.blockCountToBlockhash(
+                    blockcount).then(function(blockhash) {
+                    return blockhash;
+                }),
+                'timestamp': new Date().getTime()
+            };
+        }
+    }
 };
 
 /**

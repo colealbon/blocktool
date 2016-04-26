@@ -105,7 +105,6 @@ io.on('connection', function(socket) {
             // this poller inside connection means that no polling happens when
             // nobody is connected. additional complexity hit but less noise
             PULSE = newpulse;
-            //console.log(PULSE);
             io.volatile.emit('pulsetime', new Date().getTime());
         }
     }, config.heartbeat_seconds * 1000);

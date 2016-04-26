@@ -215,6 +215,63 @@ suite('api:', function() {
         req.end();
     });
 
+    test('/blockhash  with params JSON validation', function(done) {
+        process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+        const req = https.request({
+            host: config.app_host,
+            path: '/blockhash?starttime=1399703554&endtime=1399754821&api_key=special-key',
+            port: config.https_port,
+            rejectUnauthorized: false,
+            requestCert: false,
+            agent: false
+        }, function(res) {
+            res.setEncoding('utf8');
+            let spool = '';
+            res.on('data', function(data) {
+                spool = spool + data;
+            });
+            res.on('end', function() {
+                assert.equal(res.statusCode,
+                    200);
+                if (res.statusCode == 200) {
+                    const cheers = cheerio.load(
+                        spool, {
+                            decodeEntities: false
+                        });
+                    assert.equal(
+                        "1399703554",
+                        JSON
+                        .parse(
+                            cheers.html()).starttime
+                    );
+                    assert.equal(
+                        "1399754821",
+                        JSON
+                        .parse(
+                            cheers.html()).endtime
+                    );
+                    assert.equal(
+                        101, JSON
+                        .parse(
+                            cheers.html()).blockhash
+                        .length
+                    );
+                    assert.equal(
+                        "000000000000000082ccf8f1557c5d40b21edabb18d2d691cfbf87118bac7254",
+                        JSON
+                        .parse(
+                            cheers.html()).blockhash[
+                            0]
+                    );
+                }
+                done();
+            });
+        });
+        req.end();
+    });
+
+
+
     test('/blocktime with params JSON validation', function(done) {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
         const req = https.request({
