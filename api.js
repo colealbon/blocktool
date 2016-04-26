@@ -201,7 +201,6 @@ exports.txid = function*() {
 exports.blockhash = function*() {
     const query = this.request ? this.request.query : undefined;
     const blockcount = (query) ? parseInt(query.blockcount, 10) : undefined;
-    console.log(blockcount);
     if (isNaN(blockcount)) {
         let starttime;
         if (query.starttime === undefined && query.endtime === undefined) {
@@ -223,19 +222,22 @@ exports.blockhash = function*() {
             'timestamp': new Date().getTime()
         };
     } else {
-        console.log('*** blockcount', blockcount)
         if (blockcount.isNan) {
-            console.log('*** nan');
-            blockcount = getBlockCount().then(function(blockcount) {
-                console.log(blockcount)
-                return blockcount;
+            blocktool.getBlockCount().then(function(blockcount) {
+                this.body = {
+                    'blockcount': blockcount,
+                    'blockhash': blocktool.blockCountToBlockHash(
+                        blockcount),
+                    'timestamp': new Date().getTime()
+
+                };
             });
         } else {
-            console.log(blockcount)
             this.body = {
                 'blockcount': blockcount,
                 'blockhash': yield blocktool.blockCountToBlockhash(
-                    blockcount).then(function(blockhash) {
+                    blockcount).then(function(
+                    blockhash) {
                     return blockhash;
                 }),
                 'timestamp': new Date().getTime()
