@@ -14,4 +14,7 @@ blocktime: <span id="blocktime" class="blocktime">{{ blocktime }}</span>
 <li>
 time since last block: <span id="time_since_last_block" class="time_since_last_block">{{ time_since_last_block }}</span>
 </li>
+<li>
+cache stats:<br><ul><span id="cachestats" class="cachestats"></ul></span>
+</li>
 </ul>

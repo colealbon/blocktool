@@ -15,6 +15,19 @@
 <script>
     var socket = io();
     var LATEST_BLOCKTIME;
+    socket.on('cachestats', function(cachestats) {
+        var stathtml = '';
+        cachestatsObj = JSON.parse(cachestats);
+        for (var itemkey in cachestatsObj) {
+            prettyKey = itemkey.replace('at Object.','')
+            .replace('\(', '')
+            .replace('\)', '')
+            stathtml = stathtml + '<li>' + prettyKey + '&nbsp' +
+                'initial:&nbsp' + cachestatsObj[itemkey].initial + '&nbsp' +
+                'cached:&nbsp' + cachestatsObj[itemkey].cached + '</li>';
+        };
+        document.getElementById('cachestats').innerHTML = stathtml;
+    });
     socket.on('pulsetime', function(timestamp) {
         const timestampStr = new Date(timestamp).toLocaleString();
         document.getElementById('pulsetime').innerHTML = timestampStr;
@@ -33,4 +46,5 @@
         LATEST_BLOCKTIME = Date.parse(document.getElementById('blocktime').innerHTML)/1000;
         document.getElementById('blocktime').innerHTML = blockTimeStr;
     });
+
 </script>

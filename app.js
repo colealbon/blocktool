@@ -109,6 +109,12 @@ io.on('connection', function(socket) {
         }
     }, config.heartbeat_seconds * 1000);
 
+    // cache stats from memoizee
+    setInterval(function statspoller() {
+        const cachestats = JSON.stringify(blocktool.statistics);
+        io.volatile.emit('cachestats', cachestats);
+    }, config.heartbeat_seconds * 1000);
+
     // current blockcount
     let oldBlockCount;
     const blockcount_poller = setInterval(function blockcountPoller() {
@@ -139,5 +145,6 @@ io.on('connection', function(socket) {
         clearInterval(pulse);
         clearInterval(blockcount_poller);
         clearInterval(blocktime_poller);
+        //clearInterval(stats_poller);
     });
 });
