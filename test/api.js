@@ -485,4 +485,61 @@ suite('api:', function() {
         });
         req.end();
     });
+
+    test('/txid  with params JSON validation', function(done) {
+        process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+        const req = https.request({
+            host: config.app_host,
+            path: '/txid?starttime=1399703554&endtime=1399754821&api_key=special-key',
+            port: config.https_port,
+            rejectUnauthorized: false,
+            requestCert: false,
+            agent: false
+        }, function(res) {
+            res.setEncoding('utf8');
+            let spool = '';
+            res.on('data', function(data) {
+                spool = spool + data;
+            });
+            res.on('end', function() {
+                assert.equal(res.statusCode,
+                    200);
+                if (res.statusCode == 200) {
+                    const cheers = cheerio.load(
+                        spool, {
+                            decodeEntities: false
+                        });
+                    assert.equal(
+                        "1399703554",
+                        JSON
+                        .parse(
+                            cheers.html()).starttime
+                    );
+                    assert.equal(
+                        "1399754821",
+                        JSON
+                        .parse(
+                            cheers.html()).endtime
+                    );
+                    assert.equal(
+                        101, JSON
+                        .parse(
+                            cheers.html()).txid
+                        .length
+                    );
+                    assert.equal(
+                        237,
+                        JSON
+                        .parse(
+                            cheers.html()).txid[
+                            0].length
+                    );
+                }
+                done();
+            });
+        });
+        req.end();
+    });
+
+
 });

@@ -135,18 +135,72 @@ exports.transactionsignature = function* transactionsignature() {
  *      responseClass: Txid
  *      nickname: txid
  *      parameters:
+ *        - name: blockcount
+ *          description: integer
+ *          paramType: query
+ *          required: false
+ *          dataType: integer
  *        - name: blockhash
  *          description: 64 character string
  *          paramType: query
  *          required: false
  *          dataType: string
- *        - name: blockcount
- *          description: 64 character string
+ *        - name: starttime
+ *          description: unix timestamp (10 digits)
+ *          paramType: query
+ *          required: false
+ *          dataType: integer
+ *        - name: endtime
+ *          description: unix timestamp (10 digits)
  *          paramType: query
  *          required: false
  *          dataType: integer
  */
 
+exports.txid = function* txid() {
+    const query = this.request ? this.request.query : undefined;
+    const blockcount = (query.blockcount) ? parseInt(query.blockcount, 10) :
+        undefined;
+    const blockhash = (query.blockhash) ? query.blockhash :
+        (blockcount) ? blocktool.blockCountToBlockhash(blockcount) :
+        undefined;
+    if (blockhash === undefined) {
+        let starttime;
+        if (query.starttime === undefined && query.endtime === undefined) {
+            starttime = yield blocktool.getLatestBlockTime().then(
+                function(blocktime) {
+                    return parseInt(blocktime);
+                });
+        } else {
+            starttime = parseInt(query.starttime);
+        }
+        const endtime = query ? parseInt(query.endtime) : null;
+        this.body = {
+            'starttime': starttime || endtime,
+            'endtime': endtime || starttime,
+            'txid': yield blocktool.dateRangeToTxid({
+                'starttime': starttime || endtime,
+                'endtime': endtime || starttime
+            }),
+            'timestamp': new Date().getTime()
+        };
+    } else {
+        this.body = {
+            'blockcount': blockcount,
+            'blockhash': yield Promise.resolve(blockhash).then(
+                blockhash => blockhash),
+            'txid': yield Promise.resolve(blockhash)
+                .then(function(blockhash) {
+                    return blocktool.blockHashToTxid(blockhash);
+                })
+                .then(function(txid) {
+                    return txid;
+                }),
+            'timestamp': new Date().getTime()
+        };
+    }
+};
+/* *******************************************
 exports.txid = function* txid() {
     const query = this.request.query;
     const blockcount = (query.blockcount) ?
@@ -170,7 +224,7 @@ exports.txid = function* txid() {
         'timestamp': new Date().getTime()
     };
 };
-
+*************************************************** */
 /**
  * @swagger
  * path: /blockhash
