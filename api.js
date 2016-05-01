@@ -98,6 +98,35 @@ exports.blocktime = function* blocktime() {
 
 /**
  * @swagger
+ * path: /rawtransaction
+ * operations:
+ *   -  httpMethod: GET
+ *      summary: rawtransaction
+ *      notes: Returns raw transaction json
+ *      responseClass: TransactionSignature
+ *      nickname: rawtransaction
+ *      parameters:
+ *        - name: txid
+ *          description: 64 character string
+ *          paramType: query
+ *          required: true
+ *          dataType: string
+ */
+
+exports.rawtransaction = function* rawtransaction() {
+    const query = this.request.query;
+    const txid = query.txid;
+    this.body = {
+        'rawtransaction': yield blocktool.txidToRawTransaction(
+            txid).then(function(rawtransaction) {
+            return rawtransaction;
+        }),
+        'timestamp': new Date().getTime()
+    };
+};
+
+/**
+ * @swagger
  * path: /transactionsignature
  * operations:
  *   -  httpMethod: GET
