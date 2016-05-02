@@ -8,18 +8,41 @@ utilities for blockchain systems integration
 * ```cp config/options.js.example config/options.js;```  
 * ```npm test;``` or ```mocha --harmony test``` (optional)
 
-### usage ( a month of txids )
+### usage ( a day of txids  ./scratch.sh 20160404000000 1 )
+node --harmony app.js
+or 
+koa-cluster app.js
+
+go to here: 
+https://127.0.0.1:9000
+
 ```
-starttime=`dconv -i '%Y%m%d%H%M%S' 20160401000000 -f %s`;
-endtime=`dconv -i '%Y%m%d%H%M%S'   20160501000000 -f %s`
+targetdate=$1;
+days_to_process=$2;
+seconds_to_process=`expr $days_to_process \\* 24 \\* 60 \\* 60`
+starttime=`dconv -i '%Y%m%d%H%M%S' $targetdate -f %s`;
+endtime=`expr $starttime + $seconds_to_process - 1`;
 chunktimeperiodseconds=3600;
 chunkstart=$starttime;
-while [ $chunkstart -le $endtime ];
+mkdir -p work/$targetdate;
+while [ $chunkstart -lt $endtime ];
 do
-    chunkstop=`expr $chunkstart + $chunktimeperiodseconds + 1`;
-    if [ $endtime -le $chunkstop ]; then chunkstop=`expr $endtime`; fi;
-    curl -s --insecure https://127.0.0.1:9000/txid?starttime=$chunkstart\&endtime=$chunkstop\&api_key=special-key
-    chunkstart=$chunkstop;
-    if [ $chunkstart -ge $endtime ];then break; fi;
+    chunkstop=`expr $chunkstart + $chunktimeperiodseconds`;
+    chunkstop=`expr $chunkstop - 1`;
+    if [ $chunkstop -gt $endtime ]; then chunkstop=`expr $endtime`; fi;
+    fileexists="./work/$targetdate/$chunkstart.json";
+    if [ -f $fileexists ];
+    then
+        sleep .1;
+    else
+        curl -s --retry 5 --insecure https://127.0.0.1:9000/txid?starttime=$chunkstart\&endtime=$chunkstop\&api_key=special-key|jq -r .txid|grep --line-buffered .| \
+        sed 's/,//g' | \
+        awk '{system("curl -s --retry 5 --insecure https://127.0.0.1:9000/transactionsignature?txid="$1)}' | jq -c . >> ./work/$targetdate/$chunkstart.json;
+    fi;
+    chunkstart=`expr $chunkstart + $chunktimeperiodseconds`;
 done;
+cd work;
+tar -jcf $targetdate.tar.bz2 $targetdate;
+rm -r $targetdate;
+cd ..;
 ```
