@@ -83,6 +83,7 @@ app.use(router.get('/blockcount', api.blockcount));
 app.use(router.get('/blocktime', api.blocktime));
 app.use(router.get('/rawtransaction', api.rawtransaction));
 app.use(router.get('/transactionsignature', api.transactionsignature));
+app.use(router.get('/transactionsummary', api.transactionsummary));
 app.use(router.get('/txid', api.txid));
 app.use(router.get('/blockhash', api.blockhash));
 

@@ -156,6 +156,36 @@ exports.transactionsignature = function* transactionsignature() {
 
 /**
  * @swagger
+ * path: /transactionsummary
+ * operations:
+ *   -  httpMethod: GET
+ *      summary: transaction txid level calculations.
+ *      notes: Returns json with input and output summary
+ *      responseClass: TransactionSummary
+ *      nickname: transactionsummary
+ *      parameters:
+ *        - name: txid
+ *          description: 64 character string
+ *          paramType: query
+ *          required: true
+ *          dataType: string
+ */
+
+exports.transactionsummary = function* transactionsummary() {
+    const query = this.request.query;
+    const txid = query.txid;
+    this.body = {
+        'transactionsummary': yield blocktool.txidToTransactionSummary(
+            txid).then(function(transactionsummary) {
+                console.log(transactionsummary)
+            return transactionsummary;
+        }),
+        'timestamp': new Date().getTime()
+    };
+};
+
+/**
+ * @swagger
  * path: /txid
  * operations:
  *   -  httpMethod: GET
@@ -178,12 +208,12 @@ exports.transactionsignature = function* transactionsignature() {
  *          description: unix timestamp (10 digits)
  *          paramType: query
  *          required: false
- *          dataType: integer
+ *          dataType: string
  *        - name: endtime
  *          description: unix timestamp (10 digits)
  *          paramType: query
  *          required: false
- *          dataType: integer
+ *          dataType: string
  */
 
 exports.txid = function* txid() {

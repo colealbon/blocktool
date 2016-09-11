@@ -170,7 +170,7 @@ suite('api:', function() {
         req.end();
     });
 
-    test('/blockhash  with params JSON validation', function(done) {
+    test('/blockhash with params JSON validation', function(done) {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
         const req = https.request({
             host: config.app_host,
@@ -486,7 +486,8 @@ suite('api:', function() {
         req.end();
     });
 
-    test('/txid  with params JSON validation', function(done) {
+    test('/txid with params JSON validation', function(done) {
+        this.timeout(60000);
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
         const req = https.request({
             host: config.app_host,
@@ -522,17 +523,10 @@ suite('api:', function() {
                             cheers.html()).endtime
                     );
                     assert.equal(
-                        101, JSON
+                        33616, JSON
                         .parse(
                             cheers.html()).txid
                         .length
-                    );
-                    assert.equal(
-                        237,
-                        JSON
-                        .parse(
-                            cheers.html()).txid[
-                            0].length
                     );
                 }
                 done();
