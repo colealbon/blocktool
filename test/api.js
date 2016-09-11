@@ -310,6 +310,83 @@ suite('api:', function() {
         });
         req.end();
     });
+    test('/transactionsummary with param txid (non block reward)', function(done) {
+        process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+        const req = https.request({
+            host: config.app_host,
+            path: '/transactionsummary?txid=3b115dcc8a5d1ae060b9be8bdfc697155f6cf40f10bbfb8ab22d14306a9828cb&api_key=special-key',
+            port: config.https_port,
+            rejectUnauthorized: false,
+            requestCert: false,
+            agent: false
+        }, function(res) {
+            res.setEncoding('utf8');
+            let spool = '';
+            res.on('data', function(data) {
+                spool = spool + data;
+            });
+            res.on('end', function() {
+                assert.equal(res.statusCode,
+                    200);
+
+                if (res.statusCode == 200) {
+                    const cheers = cheerio.load(
+                        spool, {
+                            decodeEntities: false
+                        });
+                    assert.equal(
+                        '3b115dcc8a5d1ae060b9be8bdfc697155f6cf40f10bbfb8ab22d14306a9828cb',
+                        JSON
+                        .parse(
+                            cheers.html()
+                        ).transactionsummary
+                        .txid);
+                }
+                done();
+            });
+        });
+        req.end();
+    });
+
+    test('/transactionsummary with param txid (no input block reward)', function(done) {
+        process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+        const req = https.request({
+            host: config.app_host,
+            path: '/transactionsummary?txid=e69334279b20cab564eb3cb931247fbf1da7255e1c1ae76cfea821348079b71b&api_key=special-key',
+            port: config.https_port,
+            rejectUnauthorized: false,
+            requestCert: false,
+            agent: false
+        }, function(res) {
+            res.setEncoding('utf8');
+            let spool = '';
+            res.on('data', function(data) {
+                spool = spool + data;
+            });
+            res.on('end', function() {
+                assert.equal(res.statusCode,
+                    200);
+
+                if (res.statusCode == 200) {
+                    const cheers = cheerio.load(
+                        spool, {
+                            decodeEntities: false
+                        });
+                    assert.equal(
+                        'e69334279b20cab564eb3cb931247fbf1da7255e1c1ae76cfea821348079b71b',
+                        JSON
+                        .parse(
+                            cheers.html()
+                        ).transactionsummary
+                        .txid);
+                }
+                done();
+            });
+        });
+        req.end();
+    });
+
+
     test('/transactionsignature with param txid', function(done) {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
         const req = https.request({

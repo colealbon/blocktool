@@ -177,7 +177,6 @@ exports.transactionsummary = function* transactionsummary() {
     this.body = {
         'transactionsummary': yield blocktool.txidToTransactionSummary(
             txid).then(function(transactionsummary) {
-                console.log(transactionsummary)
             return transactionsummary;
         }),
         'timestamp': new Date().getTime()
