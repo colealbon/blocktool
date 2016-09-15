@@ -8,6 +8,13 @@ utilities for blockchain systems integration
 * ```cp config/options.js.example config/options.js;```  
 * ```npm test;``` or ```mocha --harmony test``` (optional)
 
+### screenshots
+
+[![live satus](https://github.com/colealbon/blocktool/blob/master/public/screenshots/index.png?raw=true)](#monitor)
+[![swagger](https://github.com/colealbon/blocktool/blob/master/public/screenshots/swagger.png?raw=true)](#swaggerapi)
+[![days destroyed](https://github.com/colealbon/blocktool/blob/master/public/screenshots/transaction_summary.png?raw=true)](#transaction)
+
+
 ### usage ( a day of txids  ./scratch.sh 20160404000000 1 )
 node --harmony app.js
 or 
